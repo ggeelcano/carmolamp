@@ -459,6 +459,12 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 .menu-l a:hover{text-decoration:underline}
 .toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,24px);opacity:0;visibility:hidden;background:#000;color:#fff;padding:12px 16px 10px;font-size:15px;display:flex;gap:12px;align-items:center;z-index:60;transition:transform .3s,opacity .3s,visibility .3s;max-width:calc(100% - 32px)}
 body.en-ficha .toast{bottom:88px}
+/* Botón fijo de WhatsApp de la tienda (3-nov-2026); en la ficha sube por encima de la barra de compra */
+.wa-flot{position:fixed;right:16px;bottom:16px;z-index:35;width:58px;height:58px;border-radius:50%;background:#25d366;color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.28)}
+.wa-flot svg.i{width:32px;height:32px}
+.wa-flot:hover{background:#1ebe5b}
+.wa-flot:focus-visible{outline:3px solid #000;outline-offset:3px}
+body.en-ficha .wa-flot{bottom:88px}
 .toast.on{transform:translate(-50%,0);opacity:1;visibility:visible}
 .toast button{background:none;border:0;color:#fff;font-weight:700;text-decoration:underline;padding:4px;white-space:nowrap}
 
@@ -1001,6 +1007,7 @@ body.en-ficha .toast{bottom:88px}
   <nav class="menu-l" id="menuL" aria-label="Menú principal"></nav>
 </dialog>
 
+<a class="wa-flot" href="https://wa.me/34633216193?text=Hola%2C%20tengo%20una%20consulta%20sobre%20la%20tienda." target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp al 633 21 61 93" title="Escríbenos por WhatsApp"><svg class="i" aria-hidden="true"><use href="#i-wa"/></svg></a>
 <div class="toast" id="toast" role="status" aria-live="polite"><span id="toastT"></span><button type="button" id="toastVer">Ver carrito</button></div>
 
 <script>
