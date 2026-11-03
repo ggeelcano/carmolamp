@@ -896,9 +896,9 @@ body.en-ficha .wa-flot{bottom:88px}
         </fieldset>
         <fieldset class="opc">
           <legend>Forma de entrega</legend>
-          <label><input type="radio" name="entrega" value="envio" checked><span><b>Envío a domicilio (península): 4,50 €, gratis desde 50 €</b><small>Baleares, Canarias, Ceuta y Melilla, por WhatsApp</small></span></label>
+          <label><input type="radio" name="entrega" value="envio" checked><span><b id="pedEnvT">Envío a domicilio (península): 4,50 €, gratis desde 50 €</b><small>Baleares, Canarias, Ceuta y Melilla, por WhatsApp</small></span></label>
           <label><input type="radio" name="entrega" value="tienda"><span><b>Recogida en tienda en Navalmoral de la Mata: gratis</b><small>Carretera Madrid-Lisboa, km 180,7</small></span></label>
-          <p class="f-hint" id="pedMuebles" hidden>Los muebles, de momento, solo con recogida en la tienda. Si los quieres en casa, <a id="pedMueblesWa" href="#" rel="noopener">escríbenos por WhatsApp</a> y te decimos el envío.</p>
+          <p class="f-hint" id="pedMuebles" hidden>Lo de la sección Muebles va en un envío aparte: 24 € por pedido, aunque sean varios, o 12 € si solo son alfombras, cojines, lámparas o relojes.</p>
         </fieldset>
         <fieldset id="pedDir">
           <legend>Dirección de entrega</legend>
@@ -1364,7 +1364,7 @@ function verFicha(p){
   pintarCompartir(p);
   const base=[['Tipo de producto',tipoDe(p)],['Categoría',c.map(x=>x.t).join(' › ')],['Marca',MARCAS[p.marca]||'']].concat(p.estilo?[['Estilo',ESTILOS[p.estilo]]]:[]);
   const pie=[['Recogida','Gratis en la tienda de Navalmoral']].concat(instalable(p)?[['Instalación','A domicilio, pregúntanos el precio']]:[])
-    .concat(enRuta(p,'muebles')?[['Envío a domicilio','Pregúntanos por WhatsApp; por la web, de momento, solo recogida']]:[]);
+    .concat(portesG(p)?[['Envío a domicilio',eurC(portesG(p))+' por pedido (península), aunque compres varios']]:[]);
   const spec=extra=>base.concat(extra).concat(pie).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('');
   $('#pSpec').innerHTML=spec([]);
   $('#pDesc').textContent=[buscaMapa(p,USO),'Si tienes dudas con la medida o el tono de luz, mándanos una foto de la habitación por WhatsApp y te aconsejamos.'].filter(Boolean).join(' ');
@@ -1427,23 +1427,29 @@ try{cesta=JSON.parse(localStorage.getItem('carmolamp-cesta')||'{}')||{};}catch(e
 for(const id in cesta){const n=Math.floor(+cesta[id]);if(n>0)cesta[id]=n;else delete cesta[id];}
 function guardar(){try{localStorage.setItem('carmolamp-cesta',JSON.stringify(cesta));}catch(e){}}
 const ENVIO=450,GRATIS=5000; // envío a domicilio 4,50 €, gratis desde 50 €
+// Gabar (sección Muebles) va aparte con portes fijos por pedido y sin envío gratis (Carlos, 3-nov-2026): 24 € si va algún mueble,
+// 12 € si solo alfombras, cojines, lámparas o relojes. El resto sigue con 4,50 € / gratis desde 50 € contando solo lo suyo. Igual en el Worker.
+const G_PEQ=['alfombras','cojines','lamparas','relojes'].map(s=>'muebles/deco-vive/'+s);
+const portesG=p=>p.marca!=='G'?0:G_PEQ.includes(p.ruta)?1200:2400;
 const cent=n=>Math.round(n*100);
 const eurC=c=>eur(c/100);
 function cuentas(entrega){
   const L=Object.keys(cesta).filter(id=>byId(id)&&cesta[id]>0).map(id=>({p:byId(id),n:cesta[id]}));
-  const sub=L.reduce((s,l)=>s+cent(l.p.precio)*l.n,0),env=entrega==='envio'&&sub<GRATIS?ENVIO:0;
-  return {L,sub,env,tot:sub+env};
+  const sub=L.reduce((s,l)=>s+cent(l.p.precio)*l.n,0),subR=L.filter(l=>!portesG(l.p)).reduce((s,l)=>s+cent(l.p.precio)*l.n,0);
+  const g=Math.max(0,...L.map(l=>portesG(l.p))),env=entrega==='envio'?(subR&&subR<GRATIS?ENVIO:0)+g:0;
+  return {L,sub,subR,g,env,tot:sub+env};
 }
 const textoCesta=t=>{const {L,sub}=cuentas();return t+'\n'+L.map(({p,n})=>`· ${n} × ${p.nombre} (${eur(p.precio)})`).join('\n')+`\nTotal: ${eurC(sub)}`;};
 function pintarCesta(){
-  const {L,sub}=cuentas(),u=L.reduce((s,l)=>s+l.n,0),gratis=sub>=GRATIS;
+  const {L,sub,subR,g}=cuentas(),u=L.reduce((s,l)=>s+l.n,0),gratis=!g&&sub>=GRATIS;
   $$('.n-c').forEach(e=>e.textContent=u);
   $$('.n-sr').forEach(e=>e.textContent=u?', '+u+(u===1?' producto':' productos'):', vacío');
   $('#cestaB').innerHTML=L.length?L.map(({p,n})=>`<div class="lin"><img src="${p.img}" alt="" referrerpolicy="no-referrer"><div><p>${esc(p.nombre)}<small>${eur(p.precio)}</small></p><div class="qty"><button type="button" data-q="${p.id}" data-d="-1" aria-label="Quitar una unidad de ${esc(p.nombre)}">−</button><span aria-label="${n} unidades">${n}</span><button type="button" data-q="${p.id}" data-d="1" aria-label="Añadir una unidad de ${esc(p.nombre)}">+</button></div></div><button type="button" class="del" data-q="${p.id}" data-d="x" aria-label="Quitar ${esc(p.nombre)} del carrito">Quitar</button></div>`).join(''):'<p class="cesta-vacia">Tu carrito está vacío.</p>';
   $('#cestaF').hidden=!L.length;
   $('#cestaTot').textContent=eurC(sub);
   const av=$('#cestaEnv');av.classList.toggle('gratis',gratis);
-  av.innerHTML=gratis?`${ico('i-check')}Tienes el envío gratis`:`Te faltan <b>${eurC(GRATIS-sub)}</b> para el envío gratis`;
+  av.innerHTML=!g?(gratis?`${ico('i-check')}Tienes el envío gratis`:`Te faltan <b>${eurC(GRATIS-sub)}</b> para el envío gratis`)
+    :`Envío de los muebles: <b>${eurC(g)}</b>`+(subR?(subR>=GRATIS?'; el resto, gratis':`; el resto, ${eurC(ENVIO)} (gratis desde ${eurC(GRATIS)})`):'');
   $('#cestaWa').href=waUrl(textoCesta('Hola, tengo una duda con este pedido de la web:'));
   if(vista==='pedido')pintarPedido();
 }
@@ -1487,11 +1493,10 @@ const F=$('#pedF');
 const entrega=()=>(F.querySelector('[name=entrega]:checked')||{}).value||'envio';
 let enviando=false,previo=null;
 function pintarPedido(){
-  // Muebles (Gabar): de momento solo recogida en tienda, hasta saber portes y plazos (3-nov-2026). El Worker lo comprueba también.
-  const muebles=cuentas('tienda').L.some(({p})=>enRuta(p,'muebles')),rEnvio=F.querySelector('[name=entrega][value=envio]');
-  rEnvio.disabled=muebles;if(muebles&&rEnvio.checked)F.querySelector('[name=entrega][value=tienda]').checked=true;
-  $('#pedMuebles').hidden=!muebles;
-  if(muebles)$('#pedMueblesWa').href=waUrl(textoCesta('Hola, quiero estos muebles con envío a domicilio. ¿Cuánto sería el envío?'));
+  // con muebles el envío deja de ser «4,50 €, gratis desde 50 €»: se pone lo que cuesta este pedido
+  const ce=cuentas('envio');
+  $('#pedEnvT').textContent='Envío a domicilio (península): '+(ce.g?eurC(ce.env):'4,50 €, gratis desde 50 €');
+  $('#pedMuebles').hidden=!ce.g;
   const ent=entrega(),{L,sub,env,tot}=cuentas(ent),dir=$('#pedDir');
   $('#pedVacio').hidden=!!L.length;F.hidden=!L.length;
   dir.hidden=dir.disabled=ent!=='envio';
