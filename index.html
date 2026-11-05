@@ -384,7 +384,8 @@ svg.i{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-widt
 }
 
 /* Ficha */
-.prod{display:grid;gap:28px}
+.prod{display:grid;grid-template-columns:minmax(0,1fr);gap:28px}
+#vProd{overflow-wrap:break-word}
 .prod-img{border:1px solid #000;align-self:start}
 .prod-img img{width:100%;aspect-ratio:1/1;object-fit:contain;padding:6%}
 .prod h1{font:700 clamp(25px,.8vw + 18px,30px)/1.2 var(--f)}
@@ -1132,6 +1133,9 @@ const ico=id=>`<svg class="i" aria-hidden="true"><use href="#${id}"/></svg>`;
 const waUrl=t=>`https://wa.me/${WA}?text=${encodeURIComponent(t)}`;
 const IMG=u=>!u?'':u.startsWith('F:')?'https://www.fabrilamp.com/'+u.slice(2):u.startsWith('A:')?'https://www.grupoiluminacionajp.com/'+u.slice(2):u.startsWith('G:')?'https://tienda.gabar.es/'+u.slice(2):u;
 const grande=u=>u.replace('-medium_default/','-large_default/');
+// Fabrilamp también da la foto a 1000 px («thickbox», unos 50 KB): la ficha la usa siempre; las tarjetas, solo en pantallas muy densas
+const XL=u=>u.includes('fabrilamp.com/')?u.replace('-large_default/','-thickbox_default/'):u;
+const srcXL=(u,s)=>XL(u)!==u?` srcset="${u} 599w, ${XL(u)} 1000w" sizes="${s}"`:'';
 
 /* Catálogo: se carga de data/catalogo.json (lo genera _tools/sync/sincroniza.js a partir de Fabrilamp y AJP) */
 let P=[],PI={},NOV=[],listo=false;
@@ -1157,7 +1161,7 @@ function precioHTML(p){
 }
 function cardHTML(p){
   return `<article class="card">
-    <div class="card-img"><img src="${p.img}" width="300" height="300" loading="lazy" decoding="async" referrerpolicy="no-referrer" alt=""></div>
+    <div class="card-img"><img src="${p.img}"${srcXL(p.img,'(min-width:900px) 300px, 72vw')} width="300" height="300" loading="lazy" decoding="async" referrerpolicy="no-referrer" alt=""></div>
     <h3><a href="#/p/${p.id}">${esc(p.nombre)}</a></h3>
     <p class="pr">${precioHTML(p)}</p>${ventTecho(p)?`<span class="tag">${ico('i-tool')}Te lo instalamos</span>`:''}
     <button class="add" type="button" data-add="${p.id}" aria-label="Añadir ${esc(p.nombre)} al carrito">${ico('i-cart')}Añadir al carrito</button>
@@ -1193,7 +1197,7 @@ function slidePromo(p,o){
   return `<div class="slide s-promo" role="group" aria-roledescription="diapositiva">
     <div class="sp-txt"><p class="sp-a">${o.a}</p><p class="sp-b">${o.b}</p><p class="sp-c">${o.c}</p><p class="sp-pill">${esc(o.pill)}</p>
       <ul class="sp-ic">${o.ic.map(([i,t])=>`<li><span class="ic" aria-hidden="true">${ico(i)}</span>${t}</li>`).join('')}</ul></div>
-    <img class="sp-img${o.recorte?' recorte':''}" src="${grande(p.img)}" width="470" height="470" alt="${esc(p.nombre)}" referrerpolicy="no-referrer">
+    <img class="sp-img${o.recorte?' recorte':''}" src="${grande(p.img)}"${srcXL(grande(p.img),'(min-width:900px) 470px, 90vw')} width="470" height="470" alt="${esc(p.nombre)}" referrerpolicy="no-referrer">
     <div class="sp-der"><p class="sp-script" aria-hidden="true">${esc(o.script)}</p><p class="sp-precios">${precios}</p></div>
     <p class="sp-cta">${ico(o.cta[0])}${o.cta[1]}</p>
     <a class="sl-link" href="#/p/${p.id}"><span class="sr">Ver ${esc(p.nombre)}, ${eur(p.precio)}</span></a>
@@ -1368,7 +1372,7 @@ $('#fReset').addEventListener('click',quitarFiltros);
 
 /* Ficha */
 let fichaId=null;
-function fotoPrincipal(src,alt){const i=$('#pImg');i.src=src;i.alt=alt;}
+function fotoPrincipal(src,alt){const i=$('#pImg');i.src=XL(src);i.alt=alt;}
 function verFicha(p){
   fichaId=p.id;mostrar('prod');
   const c=cadena(p.ruta),hoja=c[c.length-1],padre=c.length>1?c[c.length-2].p:c[0].p;
