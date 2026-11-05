@@ -1224,8 +1224,7 @@ function prepararPortada(){
   $('#cOf').innerHTML=lis(of.slice(0,16));
   $('#cOf').closest('section').hidden=!of.length;
   const slides=[];
-  const v=byId('f10245')||P.filter(p=>ventTecho(p)&&p.stock===1).sort((a,b)=>b.alta-a.alta)[0];
-  if(v)slides.push(slidePromo(v,{a:'Ahora nuestros',b:'Ventiladores',c:'con luz y <em>mando</em>',pill:'Modelo '+modelo(v),script:modelo(v)+' DC',ic:[['i-fan','Motor DC<br>silencioso'],['i-sun','3 tonos<br>de luz'],['i-tool','Te lo<br>instalamos']],cta:['i-store','Recogida gratis en tienda'],recorte:true}));
+  // la diapositiva del ventilador Hayate se quitó a petición de Carlos (5-nov-2026)
   const o=of.filter(p=>/^(plafones|decorativa\/(colgantes|lamparas|sobremesas|pies-salon))/.test(p.ruta)&&p.dto>=20).sort((a,b)=>b.precio-a.precio)[0]||of[0];
   if(o){const fam=cadena(o.ruta)[Math.min(1,cadena(o.ruta).length-1)].t;
     slides.push(slidePromo(o,{a:'Ahora nuestros',b:fam,c:'están de <em>oferta</em>',pill:'Rebaja del '+o.dto+' %',script:modelo(o),ic:[['i-tag','Precio<br>rebajado'],['i-store','Recogida<br>en tienda'],['i-chat','Te<br>asesoramos']],cta:instalable(o)?['i-tool','Te lo instalamos en casa']:['i-store','Recogida gratis en tienda']}));}
