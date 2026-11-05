@@ -1071,7 +1071,8 @@ const TREE=[
   N('relojes','Relojes'),
   N('muebles','Muebles','Muebles',[
     N('deco-vive','Deco + Vive (interior)','Muebles de interior y decoración',hojas(['Alfombras','Aparadores','Bancos','Banquetas','Cabezales','Cojines','Cómodas','Consolas','Escritorios','Espejos','Estantes y vitrinas','Lámparas','Mecedoras','Mesas','Mesas auxiliares','Mesas de centro','Mesitas de noche','Muebles de TV','Pufs','Relojes','Sillas','Sillones','Sillones relax','Sinfonieres','Taburetes'])),
-    N('out','Out (exterior)','Muebles de exterior',hojas(['Sims','Delta','Cube','White','Tape','Corner','Star','Wick','Cires','Legno','Kurve','Atesso','Tonda','Strixe','Soffice','Croci','Piazza','Bianco','Relax','Sabbia','Dualis'],'Colección'))
+    N('out','Out (exterior)','Muebles de exterior',hojas(['Sims','Delta','Cube','White','Tape','Corner','Star','Wick','Cires','Legno','Kurve','Atesso','Tonda','Strixe','Soffice','Croci','Piazza','Bianco','Relax','Sabbia','Dualis'],'Colección')),
+    N('outlet','Outlet','Outlet de muebles y decoración')
   ])
 ];
 const NODO={};
@@ -1735,7 +1736,8 @@ function ajustarPrecio(p,precio){
     const r=await fetch('data/catalogo.json');if(!r.ok)throw new Error(r.status);
     const c=await r.json();
     NOV=Array.isArray(c.nov)?c.nov:[];
-    P=c.p.map((a,i)=>({id:a[0],nombre:a[1],ruta:a[2],precio:a[3],antes:a[4],stock:a[5],img:IMG(a[6]),estilo:a[7],marca:a[8],alta:a[9],orden:i}));
+    // Fabrilamp: su «medium» mide 104 px y se ve borrosa en las tarjetas; la «large» (462-599 px) se ve nítida
+    P=c.p.map((a,i)=>({id:a[0],nombre:a[1],ruta:a[2],precio:a[3],antes:a[4],stock:a[5],img:IMG(String(a[6]).startsWith('F:')?grande(a[6]):a[6]),estilo:a[7],marca:a[8],alta:a[9],orden:i}));
     for(const p of P){while(p.ruta&&!NODO[p.ruta])p.ruta=p.ruta.split('/').slice(0,-1).join('/');ajustarPrecio(p);}
     // fuera lo que no tiene sección o precio válido, también del carrito
     P=P.filter(p=>p.ruta&&Number.isFinite(p.precio)&&p.precio>0);
