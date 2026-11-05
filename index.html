@@ -134,6 +134,10 @@ svg.i{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .sf-b{font:700 10.6cqw/.95 var(--f);text-transform:uppercase;margin:1.6cqw 0 1.6cqw}
 .sf-c{font:400 6.4cqw/1.2 var(--s)}
 .s-foto .btn-w{margin-top:5cqw}
+.s-bf{aspect-ratio:1/1;background:#f3e7da}
+.bf-fondo{position:absolute;inset:-6%;width:112%;height:112%;object-fit:cover;filter:blur(24px)}
+.bf-img{position:absolute;top:0;left:50%;height:100%;width:auto;max-width:100%;object-fit:contain;transform:translateX(-50%);box-shadow:0 0 40px rgba(0,0,0,.18)}
+@container (max-width:759px){.bf-img{box-shadow:none}}
 @container (max-width:999px){.sl-arr{display:none}}
 @container (min-width:760px){
   .slide{aspect-ratio:1425/425}
@@ -229,21 +233,25 @@ svg.i{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .tile span{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:0 14px 14px;font:600 clamp(19px,1.6vw + 8px,30px)/1.1 var(--f);text-shadow:0 1px 10px rgba(0,0,0,.35)}
 .tile.cut{background:radial-gradient(75% 65% at 50% 36%,#fff7ec 0%,#ecdcc6 50%,#bfa384 100%)}
 .tile.cut img{object-fit:contain;padding:9% 16% 24%;mix-blend-mode:multiply}
+/* categorías: la imagen (3:2, ya lleva el logo) entera y el nombre debajo, sin velo oscuro */
+.tiles .tile{aspect-ratio:auto;display:flex;flex-direction:column;background:#fff;color:var(--txt)}
+.tiles .tile::after{content:none}
+.tiles .tile img{position:static;height:auto;aspect-ratio:3/2;display:block}
+.tiles .tile:hover img{transform:none;opacity:.9}
+.tiles .tile span{position:static;padding:10px 4px 2px;text-align:center;font:600 clamp(15px,.5vw + 12px,20px)/1.2 var(--f);text-shadow:none}
+.tiles .tile:hover span{text-decoration:underline}
 .pct{position:absolute;top:12px;right:12px;z-index:1;background:var(--rojo);color:#fff;font:700 15px/1 var(--f);font-style:normal;text-transform:uppercase;padding:8px 12px 6px;border-radius:16px}
 @media(min-width:900px){
-  .tiles{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+  .tiles{grid-template-columns:repeat(5,minmax(0,1fr));gap:20px}
   .tile{aspect-ratio:336/280}
   .tile span{padding:0 34px 32px}
   .pct{top:20px;right:20px;font-size:17px}
 }
 .est{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:0 10px;max-width:1600px;margin:28px auto 0}
-.est .tile{aspect-ratio:1/1.15}
+.est .tile{aspect-ratio:1/1}
+.est .tile::after{content:none}
 @media(min-width:900px){
-  .est{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:20px;height:clamp(560px,52vw,760px)}
-  .est .tile{aspect-ratio:auto}
-  .est .t1{grid-column:1;grid-row:1/3}
-  .est .t4{grid-column:3;grid-row:1/3}
-  .est .tile span{font-size:clamp(28px,1.6vw + 14px,38px);padding:0 36px 40px}
+  .est{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
 }
 
 /* Banda negra y opiniones */
@@ -285,6 +293,7 @@ svg.i{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .tienda-fotos .pano{aspect-ratio:1080/327}
 .tienda-fotos .dos{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .tienda-fotos .dos img{aspect-ratio:4/3}
+.tienda-fotos video{display:block;width:100%;height:auto;aspect-ratio:9/16;object-fit:cover;background:#111}
 .tienda-fotos figcaption{font-size:14px;color:var(--mut);margin-top:6px}
 @media(min-width:900px){.tienda{grid-template-columns:1fr 1.15fr;gap:56px;align-items:center}}
 
@@ -675,6 +684,11 @@ body.en-ficha .wa-flot{bottom:88px}
 <section class="hero-w" aria-roledescription="carrusel" aria-label="Novedades de Carmolamp">
   <div class="hero" id="sl">
     <div class="sl-track" id="slTrack">
+      <div class="slide s-bf" id="slBF" role="group" aria-roledescription="diapositiva">
+        <img class="bf-fondo" src="assets/tienda/black-friday.jpg" width="1079" height="1080" alt="">
+        <img class="bf-img" src="assets/tienda/black-friday.jpg" width="1079" height="1080" alt="Black Friday en Carmolamp: 10 % de descuento en todos nuestros artículos, del 23 al 28 de noviembre">
+        <a class="sl-link" href="#/todo"><span class="sr">Ver el catálogo</span></a>
+      </div>
       <div class="slide s-foto" role="group" aria-roledescription="diapositiva" aria-label="3 de 3">
         <img src="assets/tienda/colgantes-cristal.jpg" width="1600" height="1200" alt="" loading="lazy">
         <div class="sf-txt">
@@ -713,19 +727,16 @@ body.en-ficha .wa-flot{bottom:88px}
     <p class="sec-p">Si buscas <b>variedad, calidad y buen precio</b>, aquí tienes por dónde empezar. Y si prefieres verlas en persona, toda la exposición está encendida en la tienda.</p>
   </div>
   <ul class="tiles">
-    <li><a class="tile" href="#/c/decorativa"><img src="assets/tienda/campana-oro.jpg" width="1600" height="2133" loading="lazy" alt="" style="object-position:50% 42%"><span>Iluminación interior</span></a></li>
-    <li><a class="tile" href="#/c/ventilacion"><img src="assets/tienda/ventilador-led.jpg" width="1600" height="900" loading="lazy" alt=""><span>Ventilación</span></a></li>
-    <li><a class="tile" href="#/c/plafones"><img src="assets/tienda/plafon-espiral.jpg" width="1600" height="1200" loading="lazy" alt=""><span>Plafones</span></a></li>
-    <li><a class="tile cut" href="#/c/flexos"><img src="assets/p/flexo-rutilo.jpg" width="470" height="470" loading="lazy" alt=""><span>Flexos</span></a></li>
-    <li><a class="tile cut" href="#/c/exterior"><img src="assets/p/ext-torva.jpg" width="470" height="470" loading="lazy" alt=""><span>Iluminación exterior</span></a></li>
-    <li><a class="tile" href="#/c/tecnica"><img src="assets/tienda/regleta-led.jpg" width="1600" height="2133" loading="lazy" alt=""><span>Iluminación técnica</span></a></li>
-    <li><a class="tile cut" href="#/c/muebles"><img src="assets/tienda/cat-muebles.jpg" width="400" height="334" loading="lazy" alt=""><span>Muebles</span></a></li>
-    <li><a class="tile" href="#/ofertas" data-tile-of><img src="assets/tienda/escaparate-negras.jpg" width="1600" height="1200" loading="lazy" alt=""><span>Zona ofertas</span><em class="pct" data-hasta></em></a></li>
-  </ul>
-  <ul class="mas-sec" aria-label="Más secciones">
-    <li><a href="#/c/calefaccion"><svg class="i" aria-hidden="true"><use href="#i-heat"/></svg><div><h3>Calefacción</h3><p>Estufas, radiadores, emisores térmicos, toalleros eléctricos y deshumidificadores.</p></div></a></li>
-    <li><a href="#/c/electrodomestico"><svg class="i" aria-hidden="true"><use href="#i-kettle"/></svg><div><h3>Pequeño electrodoméstico</h3><p>Cafeteras, tostadores, freidoras sin aceite, batidoras y secadores.</p></div></a></li>
-    <li><a href="#/c/relojes"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg><div><h3>Relojes</h3><p>Relojes para decorar la casa.</p></div></a></li>
+    <li><a class="tile" href="#/c/decorativa"><img src="assets/tienda/cat-interior.jpg" width="960" height="640" loading="lazy" alt=""><span>Iluminación interior</span></a></li>
+    <li><a class="tile" href="#/c/ventilacion"><img src="assets/tienda/cat-ventilacion.jpg" width="960" height="640" loading="lazy" alt=""><span>Ventilación</span></a></li>
+    <li><a class="tile" href="#/c/plafones"><img src="assets/tienda/cat-plafones.jpg" width="960" height="640" loading="lazy" alt=""><span>Plafones</span></a></li>
+    <li><a class="tile" href="#/c/flexos"><img src="assets/tienda/cat-flexos.jpg" width="960" height="640" loading="lazy" alt=""><span>Flexos</span></a></li>
+    <li><a class="tile" href="#/c/exterior"><img src="assets/tienda/cat-exterior-v2.jpg" width="960" height="640" loading="lazy" alt=""><span>Iluminación exterior</span></a></li>
+    <li><a class="tile" href="#/c/tecnica"><img src="assets/tienda/cat-tecnica.jpg" width="960" height="640" loading="lazy" alt=""><span>Iluminación técnica</span></a></li>
+    <li><a class="tile" href="#/c/muebles"><img src="assets/tienda/cat-muebles-v2.jpg" width="960" height="640" loading="lazy" alt=""><span>Muebles</span></a></li>
+    <li><a class="tile" href="#/c/calefaccion"><img src="assets/tienda/cat-calefaccion.jpg" width="960" height="640" loading="lazy" alt=""><span>Calefacción</span></a></li>
+    <li><a class="tile" href="#/c/electrodomestico"><img src="assets/tienda/cat-electrodomestico.jpg" width="960" height="640" loading="lazy" alt=""><span>Pequeño electrodoméstico</span></a></li>
+    <li><a class="tile" href="#/c/relojes"><img src="assets/tienda/cat-relojes.jpg" width="960" height="640" loading="lazy" alt=""><span>Relojes</span></a></li>
   </ul>
 </section>
 
@@ -734,10 +745,10 @@ body.en-ficha .wa-flot{bottom:88px}
     <h2 class="h2" id="h-est">Aquí hay estilos para todos los gustos.<br>¿Cuál es el tuyo?</h2>
   </div>
   <ul class="est">
-    <li class="t1"><a class="tile" href="#/estilo/moderno"><img src="assets/tienda/rincon-cartel.jpg" width="1600" height="2133" loading="lazy" alt="" style="object-position:50% 48%"><span>Moderno</span></a></li>
-    <li class="t2"><a class="tile cut" href="#/estilo/nature"><img src="assets/p/arce-madera.jpg" width="470" height="470" loading="lazy" alt=""><span>Nature</span></a></li>
-    <li class="t3"><a class="tile" href="#/estilo/rustico"><img src="assets/tienda/escaparate-vinilo.jpg" width="1600" height="2133" loading="lazy" alt="" style="object-position:20% 28%"><span>Rústico</span></a></li>
-    <li class="t4"><a class="tile" href="#/estilo/clasico"><img src="assets/tienda/hero-showroom.jpg" width="1600" height="1200" loading="lazy" alt="" style="object-position:58% 50%"><span>Clásico</span></a></li>
+    <li><a class="tile" href="#/estilo/moderno"><img src="assets/tienda/estilo-moderno.jpg" width="1079" height="1080" loading="lazy" alt="Lámparas de estilo moderno"></a></li>
+    <li><a class="tile" href="#/estilo/nature"><img src="assets/tienda/estilo-nature.jpg" width="1079" height="1080" loading="lazy" alt="Colección Nature: estilo natural, acogedor y cálido"></a></li>
+    <li><a class="tile" href="#/estilo/rustico"><img src="assets/tienda/estilo-rustico.jpg" width="1079" height="1080" loading="lazy" alt="Lámparas de estilo rústico"></a></li>
+    <li><a class="tile" href="#/estilo/clasico"><img src="assets/tienda/estilo-clasico.jpg" width="1079" height="1080" loading="lazy" alt="Lámparas de estilo clásico"></a></li>
   </ul>
 </section>
 
@@ -780,9 +791,9 @@ body.en-ficha .wa-flot{bottom:88px}
       <div><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg><div><dt>Teléfono y WhatsApp</dt><dd><a href="tel:+34633216193">633 21 61 93</a> · <a href="https://wa.me/34633216193" rel="noopener">WhatsApp</a></dd></div></div>
       <div><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg><div><dt>Horario</dt><dd>
         <table class="hor"><caption class="sr">Horario de apertura</caption>
-          <tr><th scope="row">Lunes a miércoles</th><td>10:00 a 13:30 · 17:30 a 20:00</td></tr>
-          <tr><th scope="row">Jueves y viernes</th><td>9:30 a 14:00 · 17:30 a 21:00</td></tr>
-          <tr><th scope="row">Sábado</th><td>10:00 a 14:00</td></tr>
+          <tr><th scope="row">Lunes a miércoles</th><td>10:00 a 13:30 · 17:00 a 20:00</td></tr>
+          <tr><th scope="row">Jueves y viernes</th><td>9:30 a 14:00 · 17:00 a 20:30</td></tr>
+          <tr><th scope="row">Sábado</th><td>10:00 a 14:00 · 18:00 a 20:00</td></tr>
           <tr><th scope="row">Domingo</th><td>Cerrado</td></tr>
         </table></dd></div></div>
     </dl>
@@ -794,8 +805,8 @@ body.en-ficha .wa-flot{bottom:88px}
   <div class="tienda-fotos">
     <figure><img class="pano" src="assets/tienda/fachada-panoramica.jpg" width="1080" height="327" loading="lazy" alt="Fachada de Carmolamp al anochecer con los escaparates iluminados"><figcaption>La tienda, en la carretera de Madrid a Lisboa</figcaption></figure>
     <div class="dos">
-      <figure><img src="assets/tienda/fachada-anexo.jpg" width="465" height="327" loading="lazy" alt="Edificio anexo de Carmolamp con muebles y decoración"><figcaption>El anexo: muebles y decoración</figcaption></figure>
-      <figure><img src="assets/tienda/hero-showroom.jpg" width="1600" height="1200" loading="lazy" alt="Exposición de Carmolamp con lámparas de cristal y dorados colgadas del techo"><figcaption>La exposición, encendida</figcaption></figure>
+      <figure><video src="assets/tienda/video-muebles.mp4" poster="assets/tienda/video-muebles.jpg" width="478" height="850" controls preload="none" playsinline aria-label="Vídeo: mesas y sillas de comedor en la exposición de muebles de Carmolamp"></video><figcaption>El anexo: muebles y decoración</figcaption></figure>
+      <figure><video src="assets/tienda/video-exposicion.mp4" poster="assets/tienda/video-exposicion.jpg" width="480" height="990" controls preload="none" playsinline aria-label="Vídeo: espejo con luz LED en la exposición de Carmolamp"></video><figcaption>La exposición, encendida</figcaption></figure>
     </div>
   </div>
 </section>
@@ -950,7 +961,7 @@ body.en-ficha .wa-flot{bottom:88px}
         <li><a class="dato" href="https://wa.me/34633216193" rel="noopener"><svg class="i" aria-hidden="true"><use href="#i-wa"/></svg>WhatsApp</a></li>
         <li><a class="dato" href="mailto:carmolamp@yahoo.es"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg>carmolamp@yahoo.es</a></li>
       </ul>
-      <p class="hor-p"><b>Horario de la tienda:</b><br>Lunes a miércoles: 10:00 a 13:30 · 17:30 a 20:00<br>Jueves y viernes: 9:30 a 14:00 · 17:30 a 21:00<br>Sábado: 10:00 a 14:00</p>
+      <p class="hor-p"><b>Horario de la tienda:</b><br>Lunes a miércoles: 10:00 a 13:30 · 17:00 a 20:00<br>Jueves y viernes: 9:30 a 14:00 · 17:00 a 20:30<br>Sábado: 10:00 a 14:00 · 18:00 a 20:00<br>Domingo: cerrado</p>
     </div>
     <nav aria-labelledby="f2"><h2 id="f2">Información</h2><ul>
       <li><a href="#tienda">La tienda</a></li>
@@ -1122,7 +1133,7 @@ const IMG=u=>!u?'':u.startsWith('F:')?'https://www.fabrilamp.com/'+u.slice(2):u.
 const grande=u=>u.replace('-medium_default/','-large_default/');
 
 /* Catálogo: se carga de data/catalogo.json (lo genera _tools/sync/sincroniza.js a partir de Fabrilamp y AJP) */
-let P=[],PI={},listo=false;
+let P=[],PI={},NOV=[],listo=false;
 const byId=id=>PI[id];
 const enRuta=(p,r)=>p.ruta===r||p.ruta.startsWith(r+'/');
 const deRuta=r=>P.filter(p=>enRuta(p,r));
@@ -1196,13 +1207,15 @@ function prepararPortada(){
   // sin ofertas se quitan los accesos a la sección y la losa pasa a novedades
   $$('[data-of]').forEach(e=>e.hidden=!hayOf);
   $$('[data-sin-of]').forEach(e=>e.hidden=hayOf);
-  if(!hayOf){const t=$('[data-tile-of]');t.href='#/novedades';t.querySelector('span').textContent='Novedades';}
+  const t=$('[data-tile-of]');if(!hayOf&&t){t.href='#/novedades';t.querySelector('span').textContent='Novedades';}
   const vistos=new Set();
   const FAMS=['decorativa/colgantes','decorativa/lamparas','plafones','ventilacion','decorativa/sobremesas','decorativa/pies-salon'];
   const porFam=FAMS.map(f=>P.filter(p=>enRuta(p,f)&&p.stock===1).sort((a,b)=>b.alta-a.alta||a.orden-b.orden)
     .filter(p=>{const k=norm(modelo(p)||p.nombre);if(vistos.has(k))return false;vistos.add(k);return true;}).slice(0,2));
   const nov=[0,1].flatMap(i=>porFam.map(l=>l[i])).filter(Boolean);
-  $('#cFav').innerHTML=lis(nov);
+  // las novedades que elige Carlos (catalogo.json → nov); si no hay lista, lo último de cada familia
+  const elegidas=NOV.map(byId).filter(Boolean);
+  $('#cFav').innerHTML=lis(elegidas.length?elegidas:nov);
   $('#cOf').innerHTML=lis(of.slice(0,16));
   $('#cOf').closest('section').hidden=!of.length;
   const slides=[];
@@ -1211,7 +1224,10 @@ function prepararPortada(){
   const o=of.filter(p=>/^(plafones|decorativa\/(colgantes|lamparas|sobremesas|pies-salon))/.test(p.ruta)&&p.dto>=20).sort((a,b)=>b.precio-a.precio)[0]||of[0];
   if(o){const fam=cadena(o.ruta)[Math.min(1,cadena(o.ruta).length-1)].t;
     slides.push(slidePromo(o,{a:'Ahora nuestros',b:fam,c:'están de <em>oferta</em>',pill:'Rebaja del '+o.dto+' %',script:modelo(o),ic:[['i-tag','Precio<br>rebajado'],['i-store','Recogida<br>en tienda'],['i-chat','Te<br>asesoramos']],cta:instalable(o)?['i-tool','Te lo instalamos en casa']:['i-store','Recogida gratis en tienda']}));}
-  $('#slTrack').insertAdjacentHTML('afterbegin',slides.join(''));
+  // el Black Friday va primero y se quita solo al acabar (28-nov)
+  const bf=$('#slBF');
+  if(bf&&Date.now()>=Date.parse('2026-11-29T00:00:00+01:00'))bf.remove();
+  if($('#slBF'))bf.insertAdjacentHTML('afterend',slides.join(''));else $('#slTrack').insertAdjacentHTML('afterbegin',slides.join(''));
   $('#nTotal').textContent=miles(P.length);
 }
 
@@ -1244,6 +1260,7 @@ function initCar(car){
     prev.disabled=tr.scrollLeft<=2;next.disabled=tr.scrollLeft>=max-2;
     const vis=Math.max(1,Math.round((tr.clientWidth+hueco())/s)),tot=Math.max(1,tr.children.length-vis+1),pos=Math.min(tot-1,Math.round(tr.scrollLeft/s));
     if(dots.children.length!==tot)dots.innerHTML='<span></span>'.repeat(tot);
+    dots.hidden=tot>15;   // con muchos productos los puntos ocupan varias filas: bastan flechas y dedo
     [...dots.children].forEach((d,i)=>d.classList.toggle('on',i===pos));
   };
   prev.addEventListener('click',()=>tr.scrollBy({left:-paso(),behavior:suave()}));
@@ -1717,6 +1734,7 @@ function ajustarPrecio(p,precio){
   try{
     const r=await fetch('data/catalogo.json');if(!r.ok)throw new Error(r.status);
     const c=await r.json();
+    NOV=Array.isArray(c.nov)?c.nov:[];
     P=c.p.map((a,i)=>({id:a[0],nombre:a[1],ruta:a[2],precio:a[3],antes:a[4],stock:a[5],img:IMG(a[6]),estilo:a[7],marca:a[8],alta:a[9],orden:i}));
     for(const p of P){while(p.ruta&&!NODO[p.ruta])p.ruta=p.ruta.split('/').slice(0,-1).join('/');ajustarPrecio(p);}
     // fuera lo que no tiene sección o precio válido, también del carrito
