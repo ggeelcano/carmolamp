@@ -128,6 +128,9 @@ svg.i{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .sp-cta svg.i{width:max(16px,4.8cqw);height:max(16px,4.8cqw);stroke-width:2;margin-top:-.6cqw}
 .s-foto{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;text-align:center;color:#fff;padding:8cqw 5cqw 9cqw;min-height:100cqw}
 .s-foto>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+/* foto vertical de Carlos (6-nov-2026): encuadre en las mesas; en escritorio va nítida a la derecha y difuminada detrás del texto */
+.s-foto>.sf-foto{object-position:50% 49%}
+.s-foto>.sf-fondo{display:none}
 .s-foto::after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.84) 0%,rgba(0,0,0,.58) 48%,rgba(0,0,0,.12) 100%)}
 .sf-txt{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center}
 .sf-a{font:400 4.4cqw/1 var(--f);text-transform:uppercase;letter-spacing:.04em}
@@ -157,6 +160,8 @@ svg.i{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-widt
   .sp-cta{position:absolute;left:45.5cqw;top:23.4cqw;gap:.8cqw;font-size:max(11px,1.3cqw);padding:.85cqw 2cqw .6cqw;border-radius:2cqw;z-index:1}
   .sp-cta svg.i{width:max(14px,2cqw);height:max(14px,2cqw);margin-top:-.3cqw}
   .s-foto{display:block;padding:0;min-height:0}
+  .s-foto>.sf-fondo{display:block;inset:-6%;width:112%;height:112%;filter:blur(24px)}
+  .s-foto>.sf-foto{left:auto;width:56%}
   .s-foto::after{background:linear-gradient(90deg,rgba(0,0,0,.82) 0%,rgba(0,0,0,.64) 38%,rgba(0,0,0,0) 70%)}
   .sf-txt{position:absolute;left:3.5cqw;top:0;bottom:0;width:42cqw;justify-content:center}
   .sf-a{font-size:2.75cqw}
@@ -692,7 +697,8 @@ body.en-ficha .wa-flot{bottom:88px}
         <a class="sl-link" href="#/todo"><span class="sr">Ver el catálogo</span></a>
       </div>
       <div class="slide s-foto" role="group" aria-roledescription="diapositiva" aria-label="3 de 3">
-        <img src="assets/tienda/colgantes-cristal.jpg" width="1600" height="1200" alt="" loading="lazy">
+        <img class="sf-fondo" src="assets/tienda/tienda-mesas.jpg" width="980" height="2016" alt="" loading="lazy">
+        <img class="sf-foto" src="assets/tienda/tienda-mesas.jpg" width="980" height="2016" alt="Exposición de Carmolamp: mesas con sobre de azulejos y lámparas encendidas" loading="lazy">
         <div class="sf-txt">
           <p class="sf-a">Ven a verlas</p>
           <p class="sf-b">Encendidas</p>
