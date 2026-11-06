@@ -1335,13 +1335,18 @@ function verLista(key){
   if(key!==lst.key){lst.key=key;lst.estilo=null;lst.max=null;lst.ver=POR_PAGINA;}
   mostrar('list');pintarLista();
 }
+// Orden «Recomendados»: los proveedores salen mezclados en proporción (AJP y Alemar cuentan como uno). Con el orden del catálogo,
+// los 4.000 de Fabrilamp tapaban a AJP en todas las secciones (Carlos, 6-nov-2026: «de AJP no hay nada en ningún lado»).
+function mezcla(L){const g={};for(const p of L){const k=p.marca==='L'?'A':p.marca;(g[k]=g[k]||[]).push(p);}
+  const pos=new Map();for(const l of Object.values(g)){l.sort((a,c)=>a.orden-c.orden);l.forEach((p,i)=>pos.set(p,(i+.5)/l.length));}
+  return L.sort((a,c)=>pos.get(a)-pos.get(c)||a.orden-c.orden);}
 function pintarLista(){
   const b=baseLista(lst.key),n=b.nodo;
   const tope=Math.max(10,Math.ceil(Math.max(0,...b.L.map(p=>p.precio))/5)*5);
   const rng=$('#fMax');rng.max=tope;rng.value=lst.max??tope;
   $('#fMaxV').textContent='hasta '+(lst.max??tope)+' €';
   let L=b.L.filter(p=>(!lst.estilo||p.estilo===lst.estilo)&&(lst.max==null||p.precio<=lst.max));
-  const o=lst.orden;L.sort(o==='asc'?(a,c)=>a.precio-c.precio:o==='desc'?(a,c)=>c.precio-a.precio:o==='dto'?(a,c)=>c.dto-a.dto||a.orden-c.orden:o==='nuevo'?porAlta:b.rel||((a,c)=>a.orden-c.orden));
+  const o=lst.orden;if(o==='rel'&&!b.rel)L=mezcla(L);else L.sort(o==='asc'?(a,c)=>a.precio-c.precio:o==='desc'?(a,c)=>c.precio-a.precio:o==='dto'?(a,c)=>c.dto-a.dto||a.orden-c.orden:o==='nuevo'?porAlta:b.rel||((a,c)=>a.orden-c.orden));
   $('#lT').textContent=b.t;$('#lD').textContent=b.d;
   $('#lMiga').innerHTML=migaHTML(b.miga);
   let grupo=TREE,actual=null;
