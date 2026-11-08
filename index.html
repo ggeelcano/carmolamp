@@ -6,7 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Carmolamp · Tienda de lámparas y ventiladores de techo en Navalmoral de la Mata</title>
 <meta name="description" content="Lámparas, plafones, iluminación técnica y de exterior, ventiladores de techo, calefacción, pequeño electrodoméstico, relojes y muebles. Tienda en Navalmoral de la Mata (Cáceres) desde 2004, con recogida en tienda e instalación a domicilio.">
-<meta name="robots" content="noindex">
+<link rel="canonical" href="https://carmolamp.com/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Store","name":"Carmolamp","description":"Tienda de lámparas, ventiladores de techo, calefacción, pequeño electrodoméstico, relojes y muebles en Navalmoral de la Mata desde 2004.","url":"https://carmolamp.com/","image":"https://carmolamp.com/assets/tienda/fachada-panoramica.jpg","telephone":"+34633216193","email":"carmolamp@yahoo.es","priceRange":"€€","address":{"@type":"PostalAddress","streetAddress":"Carretera Madrid-Lisboa, km 180,7","postalCode":"10300","addressLocality":"Navalmoral de la Mata","addressRegion":"Cáceres","addressCountry":"ES"},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday"],"opens":"10:00","closes":"13:30"},{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday"],"opens":"17:00","closes":"20:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":["Thursday","Friday"],"opens":"09:30","closes":"14:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":["Thursday","Friday"],"opens":"17:00","closes":"20:30"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"10:00","closes":"14:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"18:00","closes":"20:00"}],"sameAs":["https://www.facebook.com/Carmolamp","https://www.instagram.com/carmolamp/","https://www.tiktok.com/@carmolamp"]}</script>
 <meta property="og:type" content="website">
 <meta property="og:title" content="Carmolamp · Lámparas y ventiladores de techo">
 <meta property="og:description" content="La tienda de iluminación de Navalmoral de la Mata, ahora también online.">
@@ -1323,6 +1324,23 @@ function ruta(ev){
 }
 addEventListener('hashchange',ruta);
 
+/* Contador de visitas propio (carmolamp-stats, 8-nov-2026): sin cookies ni nada guardado en el navegador; no guarda la IP */
+const STATS='https://carmolamp-stats.josugarciandia.workers.dev/hit';
+function cuenta(d){if(!/^(www\.)?carmolamp\.com$/.test(location.hostname))return;try{navigator.sendBeacon(STATS,JSON.stringify(d));}catch(e){}}
+function clavePagina(h){h=h||'';try{h=decodeURIComponent(h);}catch(e){}if(h.startsWith('#/p/'))return 'p/'+h.slice(4);if(h.startsWith('#/c/'))return 'c/'+h.slice(4);if(h.startsWith('#/buscar/'))return 'buscar';if(h.startsWith('#/')&&h.length>2)return h.slice(2);return 'portada';}
+let primeraVista=true;
+function cuentaVista(){
+  const h=location.hash,vuelta=new URLSearchParams(location.search).has('pedido');
+  // la carga de la página es la visita (con de dónde llega); la vuelta del banco no es una visita nueva
+  cuenta(Object.assign({t:'vista',p:vuelta?'vuelta-del-banco':clavePagina(h)},primeraVista&&!vuelta?{e:1,r:document.referrer}:{}));
+  primeraVista=false;
+  if(h.startsWith('#/buscar/')){let q=h.slice(9);try{q=decodeURIComponent(q);}catch(e){}cuenta({t:'buscar',q});}
+}
+addEventListener('hashchange',cuentaVista);
+document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[href]');if(!a)return;const u=a.getAttribute('href')||'',p=clavePagina(location.hash);
+  if(/wa\.me|api\.whatsapp/.test(u))cuenta({t:'wa',p});else if(u.startsWith('tel:'))cuenta({t:'tel',p});else if(/google\.[a-z.]+\/maps/.test(u))cuenta({t:'llegar',p});},true);
+cuentaVista();
+
 /* Listado */
 const lst={key:null,estilo:null,max:null,orden:'rel',ver:POR_PAGINA};
 function buscar(q){const w=norm(q).split(/\s+/).filter(Boolean);return P.filter(p=>{const t=p.txt||(p.txt=norm(p.nombre+' '+cadena(p.ruta).map(n=>n.t+' '+n.n).join(' ')+' '+(MARCAS[p.marca]||'')));return w.every(x=>t.includes(x)||t.includes(x.replace(/e?s$/,'')));});}
@@ -1490,7 +1508,7 @@ function pintarCesta(){
 $('#cestaB').addEventListener('click',e=>{const t=e.target.closest('[data-q]');if(!t)return;const id=t.dataset.q;if(t.dataset.d==='x')delete cesta[id];else{cesta[id]=(cesta[id]||0)+(+t.dataset.d);if(cesta[id]<=0)delete cesta[id];}guardar();pintarCesta();});
 $('#cesta').addEventListener('click',e=>{if(e.target.closest('a[href^="#"]'))$('#cesta').close();});
 let tt;
-function addCesta(id,callado){const p=byId(id);if(!p)return;cesta[id]=(cesta[id]||0)+1;guardar();pintarCesta();if(callado)return;$('#toastT').textContent=p.nombre+' añadido al carrito';$('#toastVer').hidden=false;const to=$('#toast');to.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>to.classList.remove('on'),3200);}
+function addCesta(id,callado){const p=byId(id);if(!p)return;cesta[id]=(cesta[id]||0)+1;guardar();cuenta({t:'cesta',p:'p/'+id});pintarCesta();if(callado)return;$('#toastT').textContent=p.nombre+' añadido al carrito';$('#toastVer').hidden=false;const to=$('#toast');to.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>to.classList.remove('on'),3200);}
 $('#toastVer').addEventListener('click',()=>{$('#toast').classList.remove('on');$('#cesta').showModal();});
 
 /* Pago con tarjeta: el Worker carmolamp-pagos crea el pedido con sus precios y firma el pago de Redsys (TPV de CaixaBank).
@@ -1610,7 +1628,7 @@ F.addEventListener('submit',async e=>{
   if(!L.length)return pintarPedido();
   const cuerpo={items:L.map(({p,n})=>({id:p.id,cantidad:n})),cliente:{nombre:v('nombre'),email:v('email'),telefono:v('telefono'),direccion:casa?v('direccion'):'',cp:casa?v('cp'):'',poblacion:casa?v('poblacion'):'',provincia:casa?v('provincia'):''},entrega:ent,notas:v('notas'),acepto:true,web:F.elements.web.value};
   const huella=JSON.stringify(cuerpo);
-  ocupado(true);
+  ocupado(true);cuenta({t:'pagar',p:ent});
   // el pedido de antes con el total ya revisado: se paga ese en vez de crear otro
   if(previo&&previo.huella===huella&&irAlBanco(previo.redsys))return;
   const r=await api('/api/pedido',cuerpo),j=r.j;
