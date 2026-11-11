@@ -560,6 +560,7 @@ body.en-ficha .wa-flot{bottom:88px}
 .f-err a{color:#000}
 .cols{display:grid;gap:0 12px}
 @media(min-width:480px){.cols{grid-template-columns:minmax(0,1fr) minmax(0,1.7fr)}}
+.ped-pago .ped-metodo{margin-top:32px}
 .opc label{display:flex;gap:12px;align-items:flex-start;margin-top:12px;border:1px solid #000;padding:14px 14px 12px;cursor:pointer;font-size:16px;line-height:1.35}
 .opc label:has(input:checked){box-shadow:inset 0 0 0 2px #000;background:#f5f5f5}
 .opc label:has(input:disabled){border-style:dashed;color:var(--mut);cursor:not-allowed}
@@ -880,7 +881,7 @@ body.en-ficha .wa-flot{bottom:88px}
           <a class="wa-b" id="pWa" href="#" rel="noopener"><svg class="i" aria-hidden="true"><use href="#i-wa"/></svg><span class="sr">Preguntar por WhatsApp</span></a>
         </div>
         <ul class="p-notas">
-          <li><svg class="i" aria-hidden="true"><use href="#i-lock"/></svg>Pago seguro con tarjeta</li>
+          <li><svg class="i" aria-hidden="true"><use href="#i-lock"/></svg>Pago seguro con tarjeta o Bizum</li>
           <li><svg class="i" aria-hidden="true"><use href="#i-store"/></svg>Recogida gratis en Navalmoral</li>
         </ul>
         <div class="p-meta" id="pMeta"></div>
@@ -940,6 +941,11 @@ body.en-ficha .wa-flot{bottom:88px}
           <dl class="res-t" id="pedTot"></dl>
           <p class="ped-plazo" id="pedPlazo"></p>
         </section>
+        <fieldset class="opc ped-metodo">
+          <legend>Forma de pago</legend>
+          <label><input type="radio" name="metodo" value="tarjeta" checked><span><b>Tarjeta</b><small>De crédito o de débito</small></span></label>
+          <label><input type="radio" name="metodo" value="bizum"><span><b>Bizum</b><small>Confirmas el pago en la app de tu banco</small></span></label>
+        </fieldset>
         <p class="ped-txt"><a href="legal/condiciones-venta.html#desistimiento" target="_blank" rel="noopener">Tienes 14 días naturales para devolverlo</a>. Los gastos de la devolución corren de tu cuenta, salvo que el producto llegue con algún defecto o el error sea nuestro.</p>
         <div class="ped-ok"><input type="checkbox" id="fAcepto" name="acepto" required aria-describedby="e-acepto"><label for="fAcepto">He leído y acepto las <a href="legal/condiciones-venta.html" target="_blank" rel="noopener">condiciones de venta</a> y la <a href="legal/politica-privacidad.html" target="_blank" rel="noopener">política de privacidad</a></label></div>
         <p class="f-err" id="e-acepto" hidden></p>
@@ -947,7 +953,7 @@ body.en-ficha .wa-flot{bottom:88px}
         <p class="ped-msg" id="pedMsg" role="alert"></p>
         <button type="submit" class="btn-k pagar" id="pedPagar"><svg class="i" aria-hidden="true"><use href="#i-lock"/></svg><span id="pedPagarT">Pagar con tarjeta</span></button>
         <p class="sr" id="pedEstado" role="status"></p>
-        <p class="ped-seg">Pago seguro con tarjeta a través de Redsys (CaixaBank). No guardamos los datos de tu tarjeta.</p>
+        <p class="ped-seg">Pago seguro con tarjeta o Bizum a través de Redsys (CaixaBank). No guardamos los datos de tu tarjeta.</p>
       </div>
     </form>
   </div>
@@ -1543,6 +1549,8 @@ const totHTML=(sub,env,tot,ent)=>`<dt>Subtotal</dt><dd>${eurC(sub)}</dd><dt>${en
 /* Pedido: datos, forma de entrega y resumen */
 const F=$('#pedF');
 const entrega=()=>(F.querySelector('[name=entrega]:checked')||{}).value||'envio';
+const metodo=()=>(F.querySelector('[name=metodo]:checked')||{}).value==='bizum'?'bizum':'tarjeta';
+const txtPagar=t=>'Pagar con '+(metodo()==='bizum'?'Bizum':'tarjeta')+' · '+eurC(t);
 let enviando=false,previo=null;
 function pintarPedido(){
   // con muebles el envío deja de ser «4,50 €, gratis desde 50 €»: se pone lo que cuesta este pedido
@@ -1555,7 +1563,7 @@ function pintarPedido(){
   $('#pedL').innerHTML=L.map(({p,n})=>`<li><span>${esc(p.nombre)}<small>${n} × ${eur(p.precio)}</small></span><b>${eurC(cent(p.precio)*n)}</b></li>`).join('');
   $('#pedTot').innerHTML=totHTML(sub,env,tot,ent);
   $('#pedPlazo').textContent=ent==='envio'?'Plazo orientativo: envío en 2 a 5 días laborables.':'Recogida en tienda: te avisamos cuando tu pedido esté listo.';
-  if(!enviando)$('#pedPagarT').textContent='Pagar con tarjeta · '+eurC(tot);
+  if(!enviando)$('#pedPagarT').textContent=txtPagar(tot);
 }
 const MSG={
   nombre:['Escribe tu nombre y apellidos.'],
@@ -1597,7 +1605,7 @@ function validar(){
 }
 function ocupado(si){
   enviando=si;$('#pedPagar').disabled=si;
-  $('#pedPagarT').textContent=si?'Conectando con el banco...':'Pagar con tarjeta · '+eurC(cuentas(entrega()).tot);
+  $('#pedPagarT').textContent=si?'Conectando con el banco...':txtPagar(cuentas(entrega()).tot);
   $('#pedEstado').textContent=si?'Conectando con el banco...':'';
 }
 function aviso(m,wa){$('#pedMsg').innerHTML=m?esc(m)+(wa?` Si sigue sin funcionar, <a href="${waUrl(textoCesta('Hola, no he podido terminar este pedido en la web:'))}" rel="noopener">escríbenos por WhatsApp</a>.`:''):'';}
@@ -1607,7 +1615,7 @@ function errorServidor(j,status){
   if(campo){marcar(i,m);i.focus();}
   aviso(m,!campo);
 }
-F.addEventListener('change',e=>{const i=e.target;if(i.name==='entrega')pintarPedido();else if(i.id==='fAcepto'&&i.hasAttribute('aria-invalid'))marcar(i,mensaje(i));});
+F.addEventListener('change',e=>{const i=e.target;if(i.name==='entrega'||i.name==='metodo')pintarPedido();else if(i.id==='fAcepto'&&i.hasAttribute('aria-invalid'))marcar(i,mensaje(i));});
 F.addEventListener('focusout',e=>{const i=e.target;if(i.matches('.campo input')&&(i.value.trim()||i.hasAttribute('aria-invalid')))marcar(i,mensaje(i));});
 F.addEventListener('input',e=>{
   const i=e.target;
@@ -1626,9 +1634,9 @@ F.addEventListener('submit',async e=>{
   if(malos.length){aviso(malos.length>1?`Revisa los ${malos.length} campos marcados.`:'Revisa el campo marcado.');malos[0].focus();return;}
   const ent=entrega(),{L,tot}=cuentas(ent),v=k=>F.elements[k].value.trim(),casa=ent==='envio';
   if(!L.length)return pintarPedido();
-  const cuerpo={items:L.map(({p,n})=>({id:p.id,cantidad:n})),cliente:{nombre:v('nombre'),email:v('email'),telefono:v('telefono'),direccion:casa?v('direccion'):'',cp:casa?v('cp'):'',poblacion:casa?v('poblacion'):'',provincia:casa?v('provincia'):''},entrega:ent,notas:v('notas'),acepto:true,web:F.elements.web.value};
+  const cuerpo={items:L.map(({p,n})=>({id:p.id,cantidad:n})),cliente:{nombre:v('nombre'),email:v('email'),telefono:v('telefono'),direccion:casa?v('direccion'):'',cp:casa?v('cp'):'',poblacion:casa?v('poblacion'):'',provincia:casa?v('provincia'):''},entrega:ent,metodo:metodo(),notas:v('notas'),acepto:true,web:F.elements.web.value};
   const huella=JSON.stringify(cuerpo);
-  ocupado(true);cuenta({t:'pagar',p:ent});
+  ocupado(true);cuenta({t:'pagar',p:ent+'-'+metodo()});
   // el pedido de antes con el total ya revisado: se paga ese en vez de crear otro
   if(previo&&previo.huella===huella&&irAlBanco(previo.redsys))return;
   const r=await api('/api/pedido',cuerpo),j=r.j;
@@ -1702,7 +1710,7 @@ function pintarRes(tipo,{n,j},foco){
   const R={
     cargando:['','Comprobando el pago...','<p>Un momento, estamos esperando la confirmación del banco.</p>'],
     pagado:[ic('si','i-check'),'Pedido recibido',num+`<p>Te hemos enviado un correo${j&&j.email?` a <b>${esc(j.email)}</b>`:''} con el pedido.</p><p>${j&&j.entrega==='tienda'?'Te avisamos cuando esté listo para recoger en la tienda.':'Te lo enviamos en 2 a 5 días laborables.'}</p>`+res+`<div class="btns"><a class="btn-k" href="#/">Seguir comprando</a>${dudas}</div>`],
-    fallido:[ic('no','i-x'),'El pago no se ha completado','<p>No se ha hecho ningún cargo. Puedes intentarlo de nuevo con la misma tarjeta o con otra.</p>'+num+res+`<p class="ped-msg" id="resMsg" role="alert"></p><div class="btns"><button type="button" class="btn-k" data-res="pagar">Intentar de nuevo</button>${wa(`Hola, no he podido pagar el pedido ${n} en la web.`,'Ayuda por WhatsApp')}</div>`],
+    fallido:[ic('no','i-x'),'El pago no se ha completado','<p>No se ha hecho ningún cargo. Puedes intentarlo de nuevo con tarjeta o con Bizum.</p>'+num+res+`<p class="ped-msg" id="resMsg" role="alert"></p><div class="btns"><button type="button" class="btn-k" data-res="pagar" data-metodo="tarjeta">Pagar con tarjeta</button><button type="button" class="btn-k" data-res="pagar" data-metodo="bizum">Pagar con Bizum</button>${wa(`Hola, no he podido pagar el pedido ${n} en la web.`,'Ayuda por WhatsApp')}</div>`],
     espera:[ic('','i-clock'),'Estamos esperando la confirmación del banco',num+'<p>Si has completado el pago, te llegará un correo en cuanto el banco nos lo confirme. Mientras tanto, no vuelvas a pagar.</p>'+res+`<div class="btns"><button type="button" class="btn-k" data-res="otra">Comprobar otra vez</button>${dudas}</div>`],
     error:['','No hemos podido comprobar tu pedido',num+'<p>Revisa tu conexión a internet y vuelve a probar.</p>'+`<div class="btns"><button type="button" class="btn-k" data-res="otra">Comprobar otra vez</button>${dudas}</div>`],
     noexiste:['','No encontramos este pedido','<p>Puede que el enlace esté incompleto. Si has pagado y no te ha llegado el correo, escríbenos por WhatsApp y lo miramos.</p>'+`<div class="btns"><a class="btn-k" href="#/">Ir a la tienda</a>${dudas}</div>`],
@@ -1719,7 +1727,7 @@ $('#resB').addEventListener('click',async e=>{
   // otro intento de pago del mismo pedido
   const msg=$('#resMsg'),txt=b.textContent;
   b.disabled=true;b.textContent='Conectando con el banco...';msg.textContent='';
-  const r=await api('/api/pedido/pagar',{n:q.get('pedido'),t:q.get('t')}),er=r.j.error;
+  const r=await api('/api/pedido/pagar',{n:q.get('pedido'),t:q.get('t'),metodo:b.dataset.metodo==='bizum'?'bizum':'tarjeta'}),er=r.j.error;
   if(r.ok&&irAlBanco(r.j.redsys))return;
   b.disabled=false;b.textContent=txt;
   if(er==='ya_pagado'){msg.textContent=r.j.mensaje||'Este pedido ya está pagado.';b.textContent='Ver el pedido';b.dataset.res='otra';return;}
