@@ -2,11 +2,13 @@
 (function(){
   var id=document.body.getAttribute('data-id');if(!id)return;
   var CLAVE='carmolamp-cesta',STATS='https://carmolamp-stats.josugarciandia.workers.dev/hit';
+  var real=/^(www\.)?carmolamp\.com$/.test(location.hostname);
+  var cuenta=function(d){if(!real)return;try{navigator.sendBeacon(STATS,JSON.stringify(d));}catch(x){}};
   var b=document.getElementById('comprar');
   if(b)b.addEventListener('click',function(e){
     try{var c=JSON.parse(localStorage.getItem(CLAVE)||'{}')||{};if(!(c[id]>0))c[id]=1;localStorage.setItem(CLAVE,JSON.stringify(c));}
     catch(x){return;}                                    // sin almacenamiento: el enlace lleva a la ficha de la tienda
-    e.preventDefault();location.href='../#/pedido';
+    e.preventDefault();cuenta({t:'cesta',p:'p/'+id});cuenta({t:'tramitar',p:'p/'+id});location.href='../#/pedido';
   });
   var foto=document.getElementById('foto');
   document.addEventListener('click',function(e){
@@ -15,8 +17,6 @@
     [].forEach.call(document.querySelectorAll('[data-foto]'),function(x){x.setAttribute('aria-current',x===t?'true':'false');});
   });
   // contador: esta página es la entrada (con de dónde llega); lo mismo que hace la tienda en su primera vista
-  if(!/^(www\.)?carmolamp\.com$/.test(location.hostname))return;
-  var cuenta=function(d){try{navigator.sendBeacon(STATS,JSON.stringify(d));}catch(x){}};
   cuenta({t:'vista',p:'p/'+id,e:1,r:document.referrer});
   document.addEventListener('click',function(e){
     var a=e.target.closest&&e.target.closest('a[href]');if(!a)return;var u=a.getAttribute('href')||'';

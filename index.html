@@ -1352,7 +1352,21 @@ cuentaVista();
 
 /* Listado */
 const lst={key:null,estilo:null,max:null,orden:'rel',ver:POR_PAGINA};
-function buscar(q){const w=norm(q).split(/\s+/).filter(Boolean);return P.filter(p=>{const t=p.txt||(p.txt=norm(p.nombre+' '+cadena(p.ruta).concat(p.otra?cadena(p.otra):[]).map(n=>n.t+' '+n.n).join(' ')+' '+(MARCAS[p.marca]||'')));return w.every(x=>t.includes(x)||t.includes(x.replace(/e?s$/,'')));});}
+/* Buscador (12-nov-2026): busca en nombre, tipo («Lámpara de pie» encuentra los pies de salón), categorías, marca y referencia del
+   proveedor; sin palabras vacías («de», «para»...). Si no hay nada con todas las palabras, «parecidos» enseña lo que tiene más,
+   pesando más las palabras raras («plafón baño»: primero lo de baño, luego plafones) */
+const PARADAS=new Set(['de','del','la','el','los','las','para','con','y','a','en','un','una','por','que','al']);
+const palabrasBusca=q=>norm(q).split(/[^a-z0-9]+/).filter(x=>x&&!PARADAS.has(x));
+const textoBusca=p=>p.txt||(p.txt=' '+norm(p.nombre+' '+tipoDe(p)+' '+cadena(p.ruta).concat(p.otra?cadena(p.otra):[]).map(n=>n.t+' '+n.n).join(' ')+' '+(MARCAS[p.marca]||'')+' '+(p.ref||'')).replace(/[^a-z0-9]+/g,' ')+' ');
+// por principio de palabra («baño» no encuentra «ébano»); con números, también por dentro («e27» en «1xe27»)
+const tiene=(t,x)=>t.includes(' '+x)||t.includes(' '+x.replace(/e?s$/,''))||/\d/.test(x)&&t.includes(x);
+function buscar(q){const w=palabrasBusca(q);if(!w.length)return [];
+  const r=norm(q).replace(/[\s.-]+/g,''),porRef=r.length>=4&&/\d/.test(r)?P.filter(p=>p.ref&&norm(p.ref).replace(/[\s.-]+/g,'')===r):[];
+  const L=P.filter(p=>{const t=textoBusca(p);return w.every(x=>tiene(t,x));});
+  return porRef.length?[...new Set(porRef.concat(L))]:L;}
+function parecidos(q){const w=palabrasBusca(q);if(!w.length)return [];
+  const T=P.map(p=>[p,textoBusca(p)]),peso=w.map(x=>{const n=T.filter(([,t])=>tiene(t,x)).length;return n?1/n:0;});
+  return T.map(([p,t])=>[p,w.reduce((s,x,i)=>s+(tiene(t,x)?peso[i]:0),0)]).filter(([,s])=>s>0).sort((a,b)=>b[1]-a[1]||a[0].orden-b[0].orden).map(([p])=>p);}
 function baseLista(key){
   if(key.startsWith('c/')&&NODO[key.slice(2)]){const r=key.slice(2),n=NODO[r],c=cadena(r);
     return{t:n.n,d:DESC[r]||`${n.n}. Si no encuentras el modelo que buscas, pregúntanos por WhatsApp y lo pedimos al proveedor.`,L:deRuta(r),miga:c.map((x,i)=>i<c.length-1?[x.t,'#/c/'+x.p]:[x.t]),nodo:n};}
@@ -1360,7 +1374,11 @@ function baseLista(key){
   if(key==='ofertas')return hayOf?{t:'Ofertas',d:DESC.ofertas,L:P.filter(p=>p.antes),miga:[['Ofertas']]}:{t:'Ofertas',d:DESC.ofertas,L:novedades(),miga:[['Ofertas']],rel:porAlta};
   if(key==='novedades')return{t:'Novedades',d:'Lo último que ha llegado a la tienda.',L:novedades(),miga:[['Novedades']],rel:porAlta};
   if(key.startsWith('estilo/')&&ESTILOS[key.slice(7)]){const e=key.slice(7);return{t:'Estilo '+ESTILOS[e].toLowerCase(),d:EST_TXT[e],L:P.filter(p=>p.estilo===e),miga:[['Estilos'],[ESTILOS[e]]],estilo:e};}
-  if(key.startsWith('buscar/')){const q=key.slice(7);return{t:`Búsqueda: «${q}»`,d:'Resultados en nuestro catálogo online. Si no ves lo que buscas, pregúntanos: tenemos mucho más en la tienda.',L:buscar(q),miga:[['Búsqueda']],q};}
+  if(key.startsWith('buscar/')){const q=key.slice(7),L=buscar(q);
+    if(!L.length){const A=parecidos(q),pos=new Map(A.map((p,i)=>[p,i]));
+      return{t:`Búsqueda: «${q}»`,d:`No hemos encontrado nada con todas esas palabras. Te enseñamos lo más parecido; si no es lo que buscas, pregúntanos por WhatsApp: tenemos mucho más en la tienda.`,L:A,miga:[['Búsqueda']],q,aprox:true,rel:(a,c)=>pos.get(a)-pos.get(c)};}
+    const ref=L.filter(p=>p.ref&&norm(p.ref).replace(/[\s.-]+/g,'')===norm(q).replace(/[\s.-]+/g,'')),pos=new Map(L.map((p,i)=>[p,i]));
+    return{t:`Búsqueda: «${q}»`,d:'Resultados en nuestro catálogo online. Si no ves lo que buscas, pregúntanos: tenemos mucho más en la tienda.',L,miga:[['Búsqueda']],q,...(ref.length?{rel:(a,c)=>pos.get(a)-pos.get(c)}:{})};}
   return{t:'Todo el catálogo',d:DESC.todo,L:P.slice(),miga:[['Catálogo']]};
 }
 function migaHTML(m){return `<li><a href="#/">Inicio</a></li>`+m.map((x,i)=>i===m.length-1?`<li aria-current="page">${esc(x[0])}</li>`:`<li>${x[1]?`<a href="${x[1]}">${esc(x[0])}</a>`:esc(x[0])}</li>`).join('');}
@@ -1373,6 +1391,7 @@ function verLista(key){
 function mezcla(L){const g={};for(const p of L){const k=p.marca==='L'?'A':p.marca;(g[k]=g[k]||[]).push(p);}
   const pos=new Map();for(const l of Object.values(g)){l.sort((a,c)=>a.orden-c.orden);l.forEach((p,i)=>pos.set(p,(i+.5)/l.length));}
   return L.sort((a,c)=>pos.get(a)-pos.get(c)||a.orden-c.orden);}
+let sinRes=null;
 function pintarLista(){
   const b=baseLista(lst.key),n=b.nodo;
   const tope=Math.max(10,Math.ceil(Math.max(0,...b.L.map(p=>p.precio))/5)*5);
@@ -1386,7 +1405,9 @@ function pintarLista(){
   if(n){if(n.h.length)grupo=n.h;else{grupo=n.padre?n.padre.h:TREE;actual=n.p;}}
   $('#lSubs').innerHTML=grupo.map(x=>`<a href="#/c/${x.p}"${x.p===actual?' aria-current="page"':''}>${esc(x.t)}</a>`).join('')+(n||!hayOf?'':`<a href="#/ofertas"${lst.key==='ofertas'?' aria-current="page"':''}>Ofertas</a>`);
   $('#fCats').innerHTML=grupo.map(x=>{const k=deRuta(x.p).length;return `<li><a href="#/c/${x.p}"${x.p===actual?' aria-current="page"':''}>${esc(x.t)}${k?`<small>${miles(k)}</small>`:''}</a></li>`;}).join('');
-  $('#lN').textContent=b.L.length?`Hay ${miles(L.length)} producto${L.length===1?'':'s'}.`:'Catálogo en preparación.';
+  $('#lN').textContent=b.L.length?`${b.aprox?'Lo más parecido: ':'Hay '}${miles(L.length)} producto${L.length===1?'':'s'}.`:b.q?'No hay resultados.':'Catálogo en preparación.';
+  // búsqueda sin nada exacto: al contador, una vez por búsqueda (para saber qué piden y no tenemos)
+  if(b.q&&(b.aprox||!b.L.length)&&sinRes!==b.q){sinRes=b.q;cuenta({t:'busca0',p:b.q});}
   let vacio;
   if(b.q&&!b.L.length)vacio=`<li class="vacio">No hemos encontrado nada con «${esc(b.q)}». <a href="${waUrl('Hola, busco '+b.q)}" rel="noopener">Pregúntanos por WhatsApp</a> y lo buscamos en el catálogo completo.</li>`;
   else if(!b.L.length)vacio=`<li class="vacio"><b>Estamos cargando el catálogo de esta sección.</b><br>Mientras tanto, pregúntanos por WhatsApp por el modelo que buscas y te decimos precio y plazo.<br><a class="btn-k" href="${waUrl('Hola, busco algo de '+b.t.toLowerCase()+'.')}" rel="noopener">${ico('i-wa')}Preguntar por WhatsApp</a></li>`;
@@ -1479,7 +1500,7 @@ $('#pShare').addEventListener('click',e=>{
   (navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(copiado,()=>prompt('Copia este enlace para compartirlo:',url));
 });
 $('#pAdd').addEventListener('click',()=>addCesta(fichaId));
-$('#bbBuy').addEventListener('click',()=>{addCesta(fichaId,true);$('#cesta').showModal();});
+$('#bbBuy').addEventListener('click',()=>{addCesta(fichaId,true);abrirCesta();});
 $('#pThumbs').addEventListener('click',e=>{const b=e.target.closest('[data-foto]');if(!b)return;fotoPrincipal(b.dataset.foto,$('#pT').textContent);$$('#pThumbs [data-foto]').forEach(x=>x.setAttribute('aria-current',String(x===b)));});
 
 /* Carrito: {id: cantidad} en localStorage; los importes se cuentan en céntimos */
@@ -1517,8 +1538,11 @@ function pintarCesta(){
 $('#cestaB').addEventListener('click',e=>{const t=e.target.closest('[data-q]');if(!t)return;const id=t.dataset.q;if(t.dataset.d==='x')delete cesta[id];else{cesta[id]=(cesta[id]||0)+(+t.dataset.d);if(cesta[id]<=0)delete cesta[id];}guardar();pintarCesta();});
 $('#cesta').addEventListener('click',e=>{if(e.target.closest('a[href^="#"]'))$('#cesta').close();});
 let tt;
+// embudo de compra en el contador: abre la cesta → pulsa «Tramitar pedido» → pulsa «Pagar» (12-nov-2026)
+function abrirCesta(){$('#cesta').showModal();cuenta({t:'abrecesta',p:clavePagina(location.hash)});}
+$('#cestaIr').addEventListener('click',()=>cuenta({t:'tramitar',p:'cesta'}));
 function addCesta(id,callado){const p=byId(id);if(!p)return;cesta[id]=(cesta[id]||0)+1;guardar();cuenta({t:'cesta',p:'p/'+id});pintarCesta();if(callado)return;$('#toastT').textContent=p.nombre+' añadido al carrito';$('#toastVer').hidden=false;const to=$('#toast');to.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>to.classList.remove('on'),3200);}
-$('#toastVer').addEventListener('click',()=>{$('#toast').classList.remove('on');$('#cesta').showModal();});
+$('#toastVer').addEventListener('click',()=>{$('#toast').classList.remove('on');abrirCesta();});
 
 /* Pago con tarjeta: el Worker carmolamp-pagos crea el pedido con sus precios y firma el pago de Redsys (TPV de CaixaBank).
    La web solo manda ids y cantidades. */
@@ -1753,7 +1777,7 @@ document.addEventListener('click',e=>{
   if(!e.target.closest('.nav-d'))cerrarDD();
   if(!t)return;
   if(t.dataset.add){addCesta(t.dataset.add);return;}
-  if(t.hasAttribute('data-cesta')){$('#cesta').showModal();return;}
+  if(t.hasAttribute('data-cesta')){abrirCesta();return;}
   if(t.hasAttribute('data-cerrar')){t.closest('dialog').close();return;}
   if(t.dataset.fest){lst.estilo=lst.estilo===t.dataset.fest?null:t.dataset.fest;lst.ver=POR_PAGINA;pintarLista();return;}
   if(t.hasAttribute('data-reset')){quitarFiltros();}
@@ -1781,7 +1805,7 @@ function ajustarPrecio(p,precio){
     const c=await r.json();
     NOV=Array.isArray(c.nov)?c.nov:[];
     // Fabrilamp: su «medium» mide 104 px y se ve borrosa en las tarjetas; la «large» (462-599 px) se ve nítida
-    P=c.p.map((a,i)=>({id:a[0],nombre:a[1],ruta:a[2],precio:a[3],antes:a[4],stock:a[5],img:IMG(String(a[6]).startsWith('F:')?grande(a[6]):a[6]),estilo:a[7],marca:a[8],alta:a[9],otra:NODO[a[10]]?a[10]:'',orden:i}));
+    P=c.p.map((a,i)=>({id:a[0],nombre:a[1],ruta:a[2],precio:a[3],antes:a[4],stock:a[5],img:IMG(String(a[6]).startsWith('F:')?grande(a[6]):a[6]),estilo:a[7],marca:a[8],alta:a[9],otra:NODO[a[10]]?a[10]:'',ref:a[11]?String(a[11]):'',orden:i}));
     for(const p of P){while(p.ruta&&!NODO[p.ruta])p.ruta=p.ruta.split('/').slice(0,-1).join('/');ajustarPrecio(p);}
     // fuera lo que no tiene sección o precio válido, también del carrito
     P=P.filter(p=>p.ruta&&Number.isFinite(p.precio)&&p.precio>0);
