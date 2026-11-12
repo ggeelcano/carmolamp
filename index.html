@@ -1338,8 +1338,10 @@ function clavePagina(h){h=h||'';try{h=decodeURIComponent(h);}catch(e){}if(h.star
 let primeraVista=true;
 function cuentaVista(){
   const h=location.hash,vuelta=new URLSearchParams(location.search).has('pedido');
-  // la carga de la página es la visita (con de dónde llega); la vuelta del banco no es una visita nueva
-  cuenta(Object.assign({t:'vista',p:vuelta?'vuelta-del-banco':clavePagina(h)},primeraVista&&!vuelta?{e:1,r:document.referrer}:{}));
+  // la carga de la página es la visita (con de dónde llega); la vuelta del banco no es una visita nueva, ni quien llega desde
+  // una ficha suelta (p/<id>.html): esa ya contó la visita (assets/ficha.js)
+  const deFicha=/^https?:\/\/(www\.)?carmolamp\.com\/p\//.test(document.referrer);
+  cuenta(Object.assign({t:'vista',p:vuelta?'vuelta-del-banco':clavePagina(h)},primeraVista&&!vuelta&&!deFicha?{e:1,r:document.referrer}:{}));
   primeraVista=false;
   if(h.startsWith('#/buscar/')){let q=h.slice(9);try{q=decodeURIComponent(q);}catch(e){}cuenta({t:'buscar',q});}
 }

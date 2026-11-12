@@ -1,0 +1,53 @@
+/* Fichas de producto sueltas (p/<id>.html): las que indexa Google y las que se comparten. Mismos colores y letra que la tienda */
+:root{--ink:#000;--txt:#293133;--mut:#5c5c5c;--line:#d4d4d4;--verde:#13773d;--verde-bg:#e3f3e9;--f:'Josefin Sans',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--f);font-size:16px;line-height:1.35;color:var(--ink);background:#fff}
+a{color:inherit}
+img{max-width:100%}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.cab{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border-bottom:1px solid var(--ink);max-width:1330px;margin:0 auto}
+.cab .logo img{display:block;width:210px;height:auto}
+.cab-l{font-weight:600;text-transform:uppercase;font-size:14px;letter-spacing:.04em;white-space:nowrap}
+.miga{max-width:1330px;margin:0 auto;padding:16px 16px 0;color:var(--mut);font-size:15px;overflow-wrap:anywhere}
+.miga a{text-decoration:none;color:var(--ink)}
+.prod{max-width:1330px;margin:0 auto;padding:16px;display:grid;grid-template-columns:minmax(0,1fr);gap:24px;overflow-wrap:break-word}
+.foto{border:1px solid var(--line);aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:#fff}
+.foto img{width:100%;height:100%;object-fit:contain}
+.mini{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.mini button{width:72px;height:72px;padding:2px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.mini button[aria-current="true"]{border-color:var(--ink)}
+.mini img{width:100%;height:100%;object-fit:contain;display:block}
+.marca{margin:0 0 6px;font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)}
+h1{margin:0 0 12px;font-size:26px;line-height:1.2;font-weight:600}
+.precio{margin:0 0 14px;display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 10px}
+.precio strong{font-size:30px;font-weight:700}
+.precio s{color:var(--mut);font-size:18px}
+.precio span{color:var(--mut);font-size:14px}
+.oks{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.ok{display:inline-flex;align-items:center;border-radius:20px;padding:8px 14px 6px;font:700 13.5px/1 var(--f);text-transform:uppercase;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.ok.v{background:var(--verde-bg);color:var(--verde)}
+.ok.l{background:#fff4e0;color:#8a5300}
+.ok.a{background:#eef3ff;color:#1f3f8f}
+.btn{display:flex;align-items:center;justify-content:center;min-height:52px;padding:4px 20px 0;margin:0 0 10px;text-decoration:none;font-weight:700;font-size:17px;text-transform:uppercase;letter-spacing:.03em;border:1px solid #000}
+.btn.comprar{background:#000;color:#fff}
+.btn.wa{background:#fff;color:#0b6b33;border-color:#0b6b33}
+.vent{margin:16px 0;padding:0;list-style:none;color:var(--txt)}
+.vent li{padding:8px 0 6px 26px;border-bottom:1px solid #eee;position:relative}
+.vent li::before{content:"✓";position:absolute;left:4px;top:7px;color:var(--verde);font-weight:700}
+.ver{display:inline-block;margin-top:4px;font-weight:600}
+.txt{max-width:1330px;margin:0 auto;padding:8px 16px 24px;color:var(--txt)}
+.txt h2{font-size:20px;color:var(--ink);margin:24px 0 10px;text-transform:uppercase;letter-spacing:.04em}
+.txt p{margin:0 0 10px;max-width:75ch}
+.txt dl{display:grid;grid-template-columns:minmax(0,40%) minmax(0,1fr);margin:0;border-top:1px solid #eee;max-width:760px}
+.txt dt,.txt dd{margin:0;padding:9px 8px 7px 0;border-bottom:1px solid #eee}
+.txt dt{font-weight:600;color:var(--ink)}
+.pie{border-top:1px solid var(--ink);padding:20px 16px 28px;font-size:15px;color:var(--txt);text-align:center}
+.pie p{margin:0 0 8px}
+.pie .leg{font-size:13.5px;color:var(--mut)}
+@media (min-width:860px){
+  .prod{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;padding-top:24px}
+  .cab .logo img{width:300px}
+  h1{font-size:32px}
+  .btn{max-width:420px}
+}
