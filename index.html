@@ -1154,7 +1154,8 @@ const srcXL=(u,s)=>XL(u)!==u?` srcset="${u} 599w, ${XL(u)} 1000w" sizes="${s}"`:
 /* Catálogo: se carga de data/catalogo.json (lo genera _tools/sync/sincroniza.js a partir de Fabrilamp y AJP) */
 let P=[],PI={},NOV=[],listo=false;
 const byId=id=>PI[id];
-const enRuta=(p,r)=>p.ruta===r||p.ruta.startsWith(r+'/');
+// «otra»: un segundo sitio en el menú (las lámparas de Gabar viven en Muebles y salen también en Iluminación); portes y miga, por «ruta»
+const enRuta=(p,r)=>p.ruta===r||p.ruta.startsWith(r+'/')||!!p.otra&&(p.otra===r||p.otra.startsWith(r+'/'));
 const deRuta=r=>P.filter(p=>enRuta(p,r));
 const porAlta=(a,b)=>b.alta-a.alta||a.orden-b.orden;
 const novedades=()=>P.slice().sort(porAlta).slice(0,96);
@@ -1349,7 +1350,7 @@ cuentaVista();
 
 /* Listado */
 const lst={key:null,estilo:null,max:null,orden:'rel',ver:POR_PAGINA};
-function buscar(q){const w=norm(q).split(/\s+/).filter(Boolean);return P.filter(p=>{const t=p.txt||(p.txt=norm(p.nombre+' '+cadena(p.ruta).map(n=>n.t+' '+n.n).join(' ')+' '+(MARCAS[p.marca]||'')));return w.every(x=>t.includes(x)||t.includes(x.replace(/e?s$/,'')));});}
+function buscar(q){const w=norm(q).split(/\s+/).filter(Boolean);return P.filter(p=>{const t=p.txt||(p.txt=norm(p.nombre+' '+cadena(p.ruta).concat(p.otra?cadena(p.otra):[]).map(n=>n.t+' '+n.n).join(' ')+' '+(MARCAS[p.marca]||'')));return w.every(x=>t.includes(x)||t.includes(x.replace(/e?s$/,'')));});}
 function baseLista(key){
   if(key.startsWith('c/')&&NODO[key.slice(2)]){const r=key.slice(2),n=NODO[r],c=cadena(r);
     return{t:n.n,d:DESC[r]||`${n.n}. Si no encuentras el modelo que buscas, pregúntanos por WhatsApp y lo pedimos al proveedor.`,L:deRuta(r),miga:c.map((x,i)=>i<c.length-1?[x.t,'#/c/'+x.p]:[x.t]),nodo:n};}
@@ -1778,7 +1779,7 @@ function ajustarPrecio(p,precio){
     const c=await r.json();
     NOV=Array.isArray(c.nov)?c.nov:[];
     // Fabrilamp: su «medium» mide 104 px y se ve borrosa en las tarjetas; la «large» (462-599 px) se ve nítida
-    P=c.p.map((a,i)=>({id:a[0],nombre:a[1],ruta:a[2],precio:a[3],antes:a[4],stock:a[5],img:IMG(String(a[6]).startsWith('F:')?grande(a[6]):a[6]),estilo:a[7],marca:a[8],alta:a[9],orden:i}));
+    P=c.p.map((a,i)=>({id:a[0],nombre:a[1],ruta:a[2],precio:a[3],antes:a[4],stock:a[5],img:IMG(String(a[6]).startsWith('F:')?grande(a[6]):a[6]),estilo:a[7],marca:a[8],alta:a[9],otra:NODO[a[10]]?a[10]:'',orden:i}));
     for(const p of P){while(p.ruta&&!NODO[p.ruta])p.ruta=p.ruta.split('/').slice(0,-1).join('/');ajustarPrecio(p);}
     // fuera lo que no tiene sección o precio válido, también del carrito
     P=P.filter(p=>p.ruta&&Number.isFinite(p.precio)&&p.precio>0);
