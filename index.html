@@ -223,6 +223,19 @@ svg.i{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .pr s{font-size:14px;color:var(--mut)}
 .pr strong{font:600 22px/1 var(--f);padding-top:3px;white-space:nowrap}
 .ahorro{background:var(--rojo);color:#fff;font:700 13px/1 var(--f);padding:5px 8px 3px;border-radius:12px;white-space:nowrap}
+/* Black Friday: cinta roja con punta y etiqueta amarilla colgada de dos hilos, encima de la foto */
+.card-img,.prod-img{position:relative}
+.bf-sello{position:absolute;top:7%;left:0;z-index:2;display:flex;flex-direction:column;align-items:center;pointer-events:none}
+.bf-cinta{background:#d6001c;color:#fff;font:700 15px/1 var(--f);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap;padding:9px 26px 7px 14px;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,0 100%)}
+.bf-dto{position:relative;margin:13px 12px 0 0;background:#ffd400;color:#111;font:700 18px/1 var(--f);padding:6px 10px 4px;border-radius:4px;box-shadow:0 2px 4px rgba(0,0,0,.18)}
+.bf-dto::before,.bf-dto::after{content:'';position:absolute;bottom:100%;width:2px;height:14px;background:#444}
+.bf-dto::before{left:28%;transform:rotate(-12deg)}.bf-dto::after{right:28%;transform:rotate(12deg)}
+.card-img .tag-abajo{top:auto;bottom:8px;right:8px}
+
+.m-bf a{color:#d6001c!important;font-weight:700}
+.prod-img .bf-cinta{font-size:21px;padding:12px 36px 9px 20px;clip-path:polygon(0 0,calc(100% - 18px) 0,100% 50%,calc(100% - 18px) 100%,0 100%)}
+.prod-img .bf-dto{font-size:25px;padding:8px 13px 6px;margin-top:17px}
+.prod-img .bf-dto::before,.prod-img .bf-dto::after{height:18px}
 .tag{position:absolute;top:10px;right:10px;display:inline-flex;align-items:center;gap:5px;background:var(--verde-bg);color:var(--verde);font:700 11.5px/1 var(--f);text-transform:uppercase;padding:5px 9px 3px;border-radius:12px}
 .tag svg.i{width:13px;height:13px;stroke-width:2.2;margin-top:-2px}
 .add{position:relative;z-index:2;margin-top:auto;display:flex;align-items:center;justify-content:center;gap:14px;width:100%;min-height:42px;border:0;background:#000;color:#fff;font:600 16px/1.15 var(--f);text-transform:uppercase;padding:10px 12px 7px;text-align:center}
@@ -387,6 +400,10 @@ svg.i{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-widt
   .grid .add svg.i{display:none}
   .grid .tag{top:6px;right:6px;font-size:9.5px;padding:4px 6px 2px}
   .grid .tag svg.i{display:none}
+  .grid .card-img .tag-abajo{top:auto;bottom:6px;right:6px}
+  .grid .bf-cinta{font-size:10.5px;padding:6px 16px 4px 8px;clip-path:polygon(0 0,calc(100% - 9px) 0,100% 50%,calc(100% - 9px) 100%,0 100%)}
+  .grid .bf-dto{font-size:12.5px;padding:4px 6px 2px;margin:9px 8px 0 0}
+  .grid .bf-dto::before,.grid .bf-dto::after{height:10px}
 }
 
 /* Ficha */
@@ -653,7 +670,7 @@ body.en-ficha .wa-flot{bottom:88px}
 <div class="top">
   <div class="wrap top-in">
     <span class="l"><svg class="i" aria-hidden="true"><use href="#i-store"/></svg>Recogida gratis en tienda</span>
-    <span class="c"><a href="#/ofertas" data-of>Ofertas: <span data-hasta></span> ›</a><a href="legal/condiciones-venta.html#envios" data-sin-of hidden>Envío gratis a partir de 50 € ›</a></span>
+    <span class="c"><a href="#/black-friday" data-bf-barra hidden>Black Friday: −10 % en todo y muebles al 50 % ›</a><a href="#/ofertas" data-of>Ofertas: <span data-hasta></span> ›</a><a href="legal/condiciones-venta.html#envios" data-sin-of hidden>Envío gratis a partir de 50 € ›</a></span>
     <a class="r" href="#tienda"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>Visita nuestra tienda</a>
   </div>
 </div>
@@ -694,8 +711,8 @@ body.en-ficha .wa-flot{bottom:88px}
   <div class="hero" id="sl">
     <div class="sl-track" id="slTrack">
       <div class="slide s-bf" id="slBF" role="group" aria-roledescription="diapositiva">
-        <img class="bf-fondo" src="assets/tienda/black-friday.jpg" width="1079" height="1080" alt="">
-        <img class="bf-img" src="assets/tienda/black-friday.jpg" width="1079" height="1080" alt="Black Friday en Carmolamp: 10 % de descuento en todos nuestros artículos, del 23 al 28 de noviembre">
+        <img class="bf-fondo" src="assets/tienda/black-friday-29.jpg" width="1079" height="1080" alt="">
+        <img class="bf-img" src="assets/tienda/black-friday-29.jpg" width="1079" height="1080" alt="Black Friday en Carmolamp: 10 % de descuento en todos nuestros artículos, del 23 al 29 de noviembre">
         <a class="sl-link" href="#/todo"><span class="sr">Ver el catálogo</span></a>
       </div>
       <div class="slide s-foto" role="group" aria-roledescription="diapositiva" aria-label="3 de 3">
@@ -1154,6 +1171,17 @@ const srcXL=(u,s)=>XL(u)!==u?` srcset="${u} 599w, ${XL(u)} 1000w" sizes="${s}"`:
 /* Catálogo: se carga de data/catalogo.json (lo genera _tools/sync/sincroniza.js a partir de Fabrilamp y AJP) */
 let P=[],PI={},NOV=[],listo=false;
 const byId=id=>PI[id];
+// Black Friday (Carlos, 19/20-nov-2026): 10 % en todo del lunes 23 al domingo 29 y una selección de muebles de Gabar al 50 % en
+// su propia sección (#/black-friday), con portes de 18 € por mueble (12 € el reloj). Todo sale de data/black-friday.json
+// (_tools/sync/black-friday.js), el mismo que lee el Worker de cobros. Cinta roja y etiqueta amarilla en cada foto.
+// «base»: en los productos cuyo precio subió en los 30 días anteriores se tacha el más bajo de esos días y el descuento va sobre él.
+// Se enciende y se apaga solo con las fechas del archivo; en el PC se puede ver antes con ?bf=1 (solo localhost).
+let BFC=null,BF=false;
+const BF_PRUEBA=/[?&]bf=1\b/.test(location.search)&&/^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+const bfActivo=c=>!!c&&(BF_PRUEBA||Date.now()>=Date.parse(c.ini)&&Date.now()<Date.parse(c.fin));
+const selloBF=d=>`<span class="bf-sello${d>=50?' bf-50':''}" aria-hidden="true"><span class="bf-cinta">Black Friday</span><span class="bf-dto">−${d}%</span></span>`;
+// portes por unidad de los muebles al 50 % (en céntimos); 0 si no es de esa selección
+const portesU=p=>p.bf>=50&&BFC?Math.round(100*((BFC.mitad.portesId||{})[p.id]??BFC.mitad.portes)):0;
 // «otra»: un segundo sitio en el menú (las lámparas de Gabar viven en Muebles y salen también en Iluminación); portes y miga, por «ruta»
 const enRuta=(p,r)=>p.ruta===r||p.ruta.startsWith(r+'/')||!!p.otra&&(p.otra===r||p.otra.startsWith(r+'/'));
 const deRuta=r=>P.filter(p=>enRuta(p,r));
@@ -1176,9 +1204,9 @@ function precioHTML(p){
 }
 function cardHTML(p){
   return `<article class="card">
-    <div class="card-img"><img src="${p.img}"${srcXL(p.img,'(min-width:900px) 300px, 72vw')} width="300" height="300" loading="lazy" decoding="async" referrerpolicy="no-referrer" alt=""></div>
+    <div class="card-img"><img src="${p.img}"${srcXL(p.img,'(min-width:900px) 300px, 72vw')} width="300" height="300" loading="lazy" decoding="async" referrerpolicy="no-referrer" alt="">${p.bf?selloBF(p.bf)+(ventTecho(p)?`<span class="tag tag-abajo">${ico('i-tool')}Te lo instalamos</span>`:''):''}</div>
     <h3><a href="#/p/${p.id}">${esc(p.nombre)}</a></h3>
-    <p class="pr">${precioHTML(p)}</p>${ventTecho(p)?`<span class="tag">${ico('i-tool')}Te lo instalamos</span>`:''}
+    <p class="pr">${precioHTML(p)}</p>${!p.bf&&ventTecho(p)?`<span class="tag">${ico('i-tool')}Te lo instalamos</span>`:''}
     <button class="add" type="button" data-add="${p.id}" aria-label="Añadir ${esc(p.nombre)} al carrito">${ico('i-cart')}Añadir al carrito</button>
   </article>`;
 }
@@ -1194,15 +1222,16 @@ const MENU=[
   {t:'Pequeño electrodoméstico',id:'ddEl',cols:[[['electrodomestico',2]]]},
   {t:'Relojes',href:'#/c/relojes'},
   {t:'Muebles',id:'ddMu',cols:[[['muebles/deco-vive',3]],[['muebles/out',3]]]},
+  {t:'Black Friday',href:'#/black-friday'},
   {t:'Ofertas',href:'#/ofertas'},
   {t:'Contacto',href:'#contacto'}
 ];
-$('#navD').innerHTML=MENU.map(m=>m.href?`<li${m.href==='#/ofertas'?' data-of':''}><a href="${m.href}">${m.t}</a></li>`:`<li${m.cols.length>1?' class="mega"':''}><button type="button" aria-expanded="false" aria-controls="${m.id}">${m.t}<span class="caret" aria-hidden="true"></span></button><div class="dd${m.cols.length>1?' mega':''}" id="${m.id}"><div class="dd-cols" style="--n:${m.cols.length}">${m.cols.map(col=>`<div class="dd-col">${col.map(bloqueDD).join('')}</div>`).join('')}</div></div></li>`).join('');
+$('#navD').innerHTML=MENU.map(m=>m.href?`<li${m.href==='#/ofertas'?' data-of':m.href==='#/black-friday'?' data-bf hidden class="m-bf"':''}><a href="${m.href}">${m.t}</a></li>`:`<li${m.cols.length>1?' class="mega"':''}><button type="button" aria-expanded="false" aria-controls="${m.id}">${m.t}<span class="caret" aria-hidden="true"></span></button><div class="dd${m.cols.length>1?' mega':''}" id="${m.id}"><div class="dd-cols" style="--n:${m.cols.length}">${m.cols.map(col=>`<div class="dd-col">${col.map(bloqueDD).join('')}</div>`).join('')}</div></div></li>`).join('');
 const detM=r=>{const n=NODO[r];if(!n.h.length)return `<li><a href="#/c/${r}">${esc(n.t)}</a></li>`;return `<li><details><summary>${esc(n.t)}</summary><ul><li><a href="#/c/${r}">Ver todo</a></li>${n.h.map(h=>`<li><a href="#/c/${h.p}">${esc(h.t)}</a></li>`).join('')}</ul></details></li>`;};
 $('#menuL').innerHTML=`<h3>Iluminación</h3><ul>${['decorativa','plafones','flexos','tecnica','exterior'].map(detM).join('')}</ul>
   <h3>Ventilación y hogar</h3><ul>${['ventilacion','calefaccion','electrodomestico','relojes'].map(detM).join('')}</ul>
   <h3>Muebles</h3><ul>${['muebles/deco-vive','muebles/out'].map(detM).join('')}</ul>
-  <h3>Más</h3><ul><li data-of><a href="#/ofertas">Ofertas</a></li><li><a href="#/todo">Todo el catálogo</a></li></ul>
+  <h3>Más</h3><ul><li data-bf hidden class="m-bf"><a href="#/black-friday">Black Friday: muebles al 50 %</a></li><li data-of><a href="#/ofertas">Ofertas</a></li><li><a href="#/todo">Todo el catálogo</a></li></ul>
   <h3>Estilos</h3><ul>${Object.keys(ESTILOS).map(k=>`<li><a href="#/estilo/${k}">${ESTILOS[k]}</a></li>`).join('')}</ul>
   <h3>Carmolamp</h3><ul><li><a href="#tienda">La tienda y el horario</a></li><li><a href="#opiniones">Opiniones</a></li><li><a href="tel:+34633216193">Llamar al 633 21 61 93</a></li><li><a href="https://wa.me/34633216193" rel="noopener">WhatsApp</a></li></ul>`;
 
@@ -1227,6 +1256,9 @@ function prepararPortada(){
   // sin ofertas se quitan los accesos a la sección y la losa pasa a novedades
   $$('[data-of]').forEach(e=>e.hidden=!hayOf);
   $$('[data-sin-of]').forEach(e=>e.hidden=hayOf);
+  // Black Friday: entrada en el menú y la barra de arriba solo para el Black Friday (las otras dos se esconden esos días)
+  $$('[data-bf]').forEach(e=>e.hidden=!BF);
+  if(BF){const b=$('[data-bf-barra]');[...b.parentElement.children].forEach(a=>a.hidden=a!==b);}
   const t=$('[data-tile-of]');if(!hayOf&&t){t.href='#/novedades';t.querySelector('span').textContent='Novedades';}
   const vistos=new Set();
   const FAMS=['decorativa/colgantes','decorativa/lamparas','plafones','ventilacion','decorativa/sobremesas','decorativa/pies-salon'];
@@ -1243,9 +1275,13 @@ function prepararPortada(){
   const o=of.filter(p=>/^(plafones|decorativa\/(colgantes|lamparas|sobremesas|pies-salon))/.test(p.ruta)&&p.dto>=20).sort((a,b)=>b.precio-a.precio)[0]||of[0];
   if(o){const fam=cadena(o.ruta)[Math.min(1,cadena(o.ruta).length-1)].t;
     slides.push(slidePromo(o,{a:'Ahora nuestros',b:fam,c:'están de <em>oferta</em>',pill:'Rebaja del '+o.dto+' %',script:modelo(o),ic:[['i-tag','Precio<br>rebajado'],['i-store','Recogida<br>en tienda'],['i-chat','Te<br>asesoramos']],cta:instalable(o)?['i-tool','Te lo instalamos en casa']:['i-store','Recogida gratis en tienda']}));}
-  // el Black Friday va primero y se quita solo al acabar (28-nov)
+  // el Black Friday va primero y se quita solo al acabar (domingo 29-nov); mientras dura, detrás va el cartel de los muebles al 50 %
   const bf=$('#slBF');
-  if(bf&&Date.now()>=Date.parse('2026-11-29T00:00:00+01:00'))bf.remove();
+  if(bf&&!BF_PRUEBA&&Date.now()>=Date.parse(BFC?BFC.fin:'2026-11-30T00:00:00+01:00'))bf.remove();
+  if(BF)slides.unshift(`<div class="slide s-bf" role="group" aria-roledescription="diapositiva">
+    <img class="bf-fondo" src="assets/tienda/black-friday-muebles.jpg" width="1080" height="1080" alt="">
+    <img class="bf-img" src="assets/tienda/black-friday-muebles.jpg" width="1080" height="1080" alt="Black Friday en Carmolamp: muebles al 50 % del 23 al 29 de noviembre, con portes de 18 € por mueble; y en todo lo demás, 10 % de descuento">
+    <a class="sl-link" href="#/black-friday"><span class="sr">Ver los muebles al 50 %</span></a></div>`);
   if($('#slBF'))bf.insertAdjacentHTML('afterend',slides.join(''));else $('#slTrack').insertAdjacentHTML('afterbegin',slides.join(''));
   $('#nTotal').textContent=miles(P.length);
 }
@@ -1370,6 +1406,7 @@ function parecidos(q){const w=palabrasBusca(q);if(!w.length)return [];
 function baseLista(key){
   if(key.startsWith('c/')&&NODO[key.slice(2)]){const r=key.slice(2),n=NODO[r],c=cadena(r);
     return{t:n.n,d:DESC[r]||`${n.n}. Si no encuentras el modelo que buscas, pregúntanos por WhatsApp y lo pedimos al proveedor.`,L:deRuta(r),miga:c.map((x,i)=>i<c.length-1?[x.t,'#/c/'+x.p]:[x.t]),nodo:n};}
+  if(key==='black-friday'&&BF)return{t:'Black Friday: muebles al 50 %',d:`Del 23 al 29 de noviembre, estos muebles de nuestra colección están a mitad de precio. Portes: ${eur(BFC.mitad.portes)} por mueble (el reloj, ${eur(BFC.mitad.portesId.g919)}). Y en el resto de la tienda, un ${BFC.dto} % de descuento en todo.`,L:P.filter(p=>p.bf>=50),miga:[['Black Friday']]};
   // sin ofertas, la sección lo dice y enseña las novedades
   if(key==='ofertas')return hayOf?{t:'Ofertas',d:DESC.ofertas,L:P.filter(p=>p.antes),miga:[['Ofertas']]}:{t:'Ofertas',d:DESC.ofertas,L:novedades(),miga:[['Ofertas']],rel:porAlta};
   if(key==='novedades')return{t:'Novedades',d:'Lo último que ha llegado a la tienda.',L:novedades(),miga:[['Novedades']],rel:porAlta};
@@ -1437,6 +1474,7 @@ function verFicha(p){
   const c=cadena(p.ruta),hoja=c[c.length-1],padre=c.length>1?c[c.length-2].p:c[0].p;
   $('#pMiga').innerHTML=migaHTML([...c.map(x=>[x.t,'#/c/'+x.p]),[p.nombre]]);
   fotoPrincipal(grande(p.img),p.nombre);$('#pThumbs').innerHTML='';
+  $('.prod-img .bf-sello')?.remove();if(p.bf)$('.prod-img').insertAdjacentHTML('beforeend',selloBF(p.bf));
   $('#pT').textContent=p.nombre;
   $('#pFeat').innerHTML=`<li>${ico('i-tag')}Marca<b>${MARCAS[p.marca]||''}</b></li><li>${ico('i-bulb')}Tipo<b>${esc(tipoDe(p))}</b></li>`+(p.estilo?`<li>${ico('i-half')}Estilo<b>${ESTILOS[p.estilo]}</b></li>`:'');
   $('#pPr').innerHTML=(p.antes?`<s><span class="sr">Antes </span>${eur(p.antes)}</s>`:'')+`<strong>${p.antes?'<span class="sr">Ahora </span>':''}${eur(p.precio)}</strong><span class="iva">IVA incluido</span>`+(p.antes?`<span class="ahorro">−${eur(p.ah)}<span class="sr"> de descuento</span></span>`:'');
@@ -1446,7 +1484,8 @@ function verFicha(p){
   pintarCompartir(p);
   const base=[['Tipo de producto',tipoDe(p)],['Categoría',c.map(x=>x.t).join(' › ')],['Marca',MARCAS[p.marca]||'']].concat(p.estilo?[['Estilo',ESTILOS[p.estilo]]]:[]);
   const pie=[['Recogida','Gratis en la tienda de Navalmoral']].concat(instalable(p)?[['Instalación','A domicilio, pregúntanos el precio']]:[])
-    .concat(portesG(p)?[['Envío a domicilio',eurC(portesG(p))+' por pedido (península), aunque compres varios']]:[]);
+    .concat(portesU(p)?[['Envío a domicilio',eurC(portesU(p))+' por unidad (península), precio especial del Black Friday']]
+      :portesG(p)?[['Envío a domicilio',eurC(portesG(p))+' por pedido (península), aunque compres varios']]:[]);
   const spec=extra=>base.concat(extra).concat(pie).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('');
   $('#pSpec').innerHTML=spec([]);
   $('#pDesc').textContent=[buscaMapa(p,USO),'Si tienes dudas con la medida o el tono de luz, mándanos una foto de la habitación por WhatsApp y te aconsejamos.'].filter(Boolean).join(' ');
@@ -1512,13 +1551,14 @@ const ENVIO=450,GRATIS=5000; // envío a domicilio 4,50 €, gratis desde 50 €
 // Gabar (sección Muebles) va aparte con portes fijos por pedido y sin envío gratis (Carlos, 3-nov-2026): 24 € si va algún mueble,
 // 12 € si solo alfombras, cojines, lámparas o relojes. El resto sigue con 4,50 € / gratis desde 50 € contando solo lo suyo. Igual en el Worker.
 const G_PEQ=['alfombras','cojines','lamparas','relojes'].map(s=>'muebles/deco-vive/'+s);
-const portesG=p=>p.marca!=='G'?0:G_PEQ.includes(p.ruta)?1200:2400;
+// Los muebles al 50 % del Black Friday van aparte: portes por unidad (portesU), no entran en los 24 € por pedido. Igual en el Worker.
+const portesG=p=>p.marca!=='G'||portesU(p)?0:G_PEQ.includes(p.ruta)?1200:2400;
 const cent=n=>Math.round(n*100);
 const eurC=c=>eur(c/100);
 function cuentas(entrega){
   const L=Object.keys(cesta).filter(id=>byId(id)&&cesta[id]>0).map(id=>({p:byId(id),n:cesta[id]}));
-  const sub=L.reduce((s,l)=>s+cent(l.p.precio)*l.n,0),subR=L.filter(l=>!portesG(l.p)).reduce((s,l)=>s+cent(l.p.precio)*l.n,0);
-  const g=Math.max(0,...L.map(l=>portesG(l.p))),env=entrega==='envio'?(subR&&subR<GRATIS?ENVIO:0)+g:0;
+  const sub=L.reduce((s,l)=>s+cent(l.p.precio)*l.n,0),subR=L.filter(l=>!portesG(l.p)&&!portesU(l.p)).reduce((s,l)=>s+cent(l.p.precio)*l.n,0);
+  const g=Math.max(0,...L.map(l=>portesG(l.p)))+L.reduce((s,l)=>s+portesU(l.p)*l.n,0),env=entrega==='envio'?(subR&&subR<GRATIS?ENVIO:0)+g:0;
   return {L,sub,subR,g,env,tot:sub+env};
 }
 const textoCesta=t=>{const {L,sub}=cuentas();return t+'\n'+L.map(({p,n})=>`· ${n} × ${p.nombre} (${eur(p.precio)})`).join('\n')+`\nTotal: ${eurC(sub)}`;};
@@ -1584,6 +1624,9 @@ function pintarPedido(){
   const ce=cuentas('envio');
   $('#pedEnvT').textContent='Envío a domicilio (península): '+(ce.g?eurC(ce.env):'4,50 €, gratis desde 50 €');
   $('#pedMuebles').hidden=!ce.g;
+  {const u=ce.L.some(l=>portesU(l.p)),g=ce.L.some(l=>portesG(l.p));
+   $('#pedMuebles').textContent=(u?'Los muebles del Black Friday al 50 % van en un envío aparte: 18 € por mueble (12 € el reloj). ':'')
+     +(g?(u?'El resto de':'Lo de')+' la sección Muebles va en un envío aparte: 24 € por pedido, aunque sean varios, o 12 € si solo son alfombras, cojines, lámparas o relojes.':'');}
   const ent=entrega(),{L,sub,env,tot}=cuentas(ent),dir=$('#pedDir');
   $('#pedVacio').hidden=!!L.length;F.hidden=!L.length;
   dir.hidden=dir.disabled=ent!=='envio';
@@ -1801,12 +1844,18 @@ function ajustarPrecio(p,precio){
 (async()=>{
   ruta(); // la vuelta del banco no espera al catálogo
   try{
+    const bfP=fetch('data/black-friday.json').then(x=>x.ok?x.json():null).catch(()=>null);
     const r=await fetch('data/catalogo.json');if(!r.ok)throw new Error(r.status);
     const c=await r.json();
+    BFC=await bfP;BF=bfActivo(BFC);
     NOV=Array.isArray(c.nov)?c.nov:[];
     // Fabrilamp: su «medium» mide 104 px y se ve borrosa en las tarjetas; la «large» (462-599 px) se ve nítida
     P=c.p.map((a,i)=>({id:a[0],nombre:a[1],ruta:a[2],precio:a[3],antes:a[4],stock:a[5],img:IMG(String(a[6]).startsWith('F:')?grande(a[6]):a[6]),estilo:a[7],marca:a[8],alta:a[9],otra:NODO[a[10]]?a[10]:'',ref:a[11]?String(a[11]):'',orden:i}));
     for(const p of P){while(p.ruta&&!NODO[p.ruta])p.ruta=p.ruta.split('/').slice(0,-1).join('/');ajustarPrecio(p);}
+    // Black Friday: se tacha el precio de ahora (o el más bajo de los 30 días anteriores, «base») y se rebaja el 10 % o el 50 %
+    if(BF){const mitad=new Set(BFC.mitad.ids),B=BFC.base||{};
+      for(const p of P){if(!(p.precio>0))continue;const d=mitad.has(p.id)?BFC.mitad.dto:BFC.dto,b=B[p.id]>0&&B[p.id]<p.precio?B[p.id]:p.precio;
+        p.bf=d;p.antes=b;ajustarPrecio(p,Math.round(b*(100-d))/100);}}
     // fuera lo que no tiene sección o precio válido, también del carrito
     P=P.filter(p=>p.ruta&&Number.isFinite(p.precio)&&p.precio>0);
     for(const p of P)PI[p.id]=p;
