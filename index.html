@@ -186,6 +186,7 @@ svg.i{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .h2{font:600 clamp(25px,1vw + 15px,30px)/1.15 var(--f);color:#232323;text-align:center}
 .script+.h2{margin-top:10px}
 .sec-p{font-size:clamp(17px,1.2vw + 5px,19px);line-height:1.4;max-width:1120px;margin:24px auto 0}
+#secBF .script{color:#d6001c}#secBF .sec-p{text-align:center;margin-top:12px}
 .btn-w{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-width:220px;min-height:50px;padding:4px 28px 0;background:#fff;color:var(--txt);border:1px solid #fff;border-radius:6px;box-shadow:inset 0 0 0 1px #000;font:600 17px/1 var(--f);letter-spacing:1.5px;text-transform:uppercase;text-decoration:none}
 .btn-w:hover{background:#000;color:#fff;box-shadow:inset 0 0 0 1px #fff}
 .btn-k,.btn-l{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:50px;padding:4px 24px 0;border:1px solid #000;font:600 16px/1 var(--f);text-transform:uppercase;text-decoration:none;text-align:center}
@@ -710,6 +711,11 @@ body.en-ficha .wa-flot{bottom:88px}
 <section class="hero-w" aria-roledescription="carrusel" aria-label="Novedades de Carmolamp">
   <div class="hero" id="sl">
     <div class="sl-track" id="slTrack">
+      <div class="slide s-bf" id="slBFM" role="group" aria-roledescription="diapositiva">
+        <img class="bf-fondo" src="assets/tienda/black-friday-muebles.jpg" width="1080" height="1080" alt="">
+        <img class="bf-img" src="assets/tienda/black-friday-muebles.jpg" width="1080" height="1080" alt="Black Friday en Carmolamp: muebles al 50 % del 23 al 29 de noviembre, con portes de 18 € por mueble; y en todo lo demás, 10 % de descuento">
+        <a class="sl-link" href="#/black-friday"><span class="sr">Ver los muebles al 50 %</span></a>
+      </div>
       <div class="slide s-bf" id="slBF" role="group" aria-roledescription="diapositiva">
         <img class="bf-fondo" src="assets/tienda/black-friday-29.jpg" width="1079" height="1080" alt="">
         <img class="bf-img" src="assets/tienda/black-friday-29.jpg" width="1079" height="1080" alt="Black Friday en Carmolamp: 10 % de descuento en todos nuestros artículos, del 23 al 29 de noviembre">
@@ -735,6 +741,19 @@ body.en-ficha .wa-flot{bottom:88px}
 <section class="wrap intro" aria-labelledby="h1">
   <h1 id="h1">Tienda de iluminación, ventilación y muebles</h1>
   <p>Te lo ponemos fácil para <b>iluminar y amueblar tu casa</b>: lámparas, plafones, flexos e iluminación técnica y de exterior, <b>ventiladores y calefacción</b>, pequeño electrodoméstico, relojes y muebles. Tienda en <b>Navalmoral de la Mata desde 2004</b>, con recogida gratis e instalación a domicilio. En la web tienes <b><span id="nTotal">más de 4.000</span> artículos</b> con precio y stock al día.</p>
+</section>
+
+<section class="wrap sec" id="secBF" aria-labelledby="h-bf" hidden>
+  <p class="script">Black Friday, del 23 al 29 de noviembre</p>
+  <h2 class="h2" id="h-bf">Muebles al 50 %</h2>
+  <p class="sec-p">A mitad de precio hasta el domingo 29. Portes: 18 € por mueble.</p>
+  <div class="car" role="region" aria-labelledby="h-bf">
+    <button class="car-arr prev" type="button" aria-label="Muebles anteriores"><svg class="i" aria-hidden="true"><use href="#i-l"/></svg></button>
+    <ul class="car-track" id="cBF"></ul>
+    <button class="car-arr next" type="button" aria-label="Más muebles"><svg class="i" aria-hidden="true"><use href="#i-r"/></svg></button>
+    <div class="car-dots" aria-hidden="true"></div>
+  </div>
+  <div class="mas"><a class="btn-k" href="#/black-friday">Ver todos los muebles al 50 %</a></div>
 </section>
 
 <section class="wrap sec" aria-labelledby="h-fav">
@@ -1275,13 +1294,13 @@ function prepararPortada(){
   const o=of.filter(p=>/^(plafones|decorativa\/(colgantes|lamparas|sobremesas|pies-salon))/.test(p.ruta)&&p.dto>=20).sort((a,b)=>b.precio-a.precio)[0]||of[0];
   if(o){const fam=cadena(o.ruta)[Math.min(1,cadena(o.ruta).length-1)].t;
     slides.push(slidePromo(o,{a:'Ahora nuestros',b:fam,c:'están de <em>oferta</em>',pill:'Rebaja del '+o.dto+' %',script:modelo(o),ic:[['i-tag','Precio<br>rebajado'],['i-store','Recogida<br>en tienda'],['i-chat','Te<br>asesoramos']],cta:instalable(o)?['i-tool','Te lo instalamos en casa']:['i-store','Recogida gratis en tienda']}));}
-  // el Black Friday va primero y se quita solo al acabar (domingo 29-nov); mientras dura, detrás va el cartel de los muebles al 50 %
+  // el Black Friday va primero y se quita solo al acabar (domingo 29-nov); delante de todo, el cartel de los muebles al 50 %
+  // (Carlos, 23-nov), que solo se queda mientras dura el Black Friday
   const bf=$('#slBF');
   if(bf&&!BF_PRUEBA&&Date.now()>=Date.parse(BFC?BFC.fin:'2026-11-30T00:00:00+01:00'))bf.remove();
-  if(BF)slides.unshift(`<div class="slide s-bf" role="group" aria-roledescription="diapositiva">
-    <img class="bf-fondo" src="assets/tienda/black-friday-muebles.jpg" width="1080" height="1080" alt="">
-    <img class="bf-img" src="assets/tienda/black-friday-muebles.jpg" width="1080" height="1080" alt="Black Friday en Carmolamp: muebles al 50 % del 23 al 29 de noviembre, con portes de 18 € por mueble; y en todo lo demás, 10 % de descuento">
-    <a class="sl-link" href="#/black-friday"><span class="sr">Ver los muebles al 50 %</span></a></div>`);
+  if(!BF)$('#slBFM')?.remove();
+  // y en la portada, encima de las novedades, la fila de los muebles al 50 % (el set de 4 sillas g1042 no, que Gabar no deja ver su foto)
+  if(BF){$('#cBF').innerHTML=lis(P.filter(p=>p.bf>=50&&p.id!=='g1042'));$('#secBF').hidden=false;}
   if($('#slBF'))bf.insertAdjacentHTML('afterend',slides.join(''));else $('#slTrack').insertAdjacentHTML('afterbegin',slides.join(''));
   $('#nTotal').textContent=miles(P.length);
 }
