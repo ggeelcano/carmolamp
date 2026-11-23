@@ -1414,7 +1414,10 @@ const PARADAS=new Set(['de','del','la','el','los','las','para','con','y','a','en
 const palabrasBusca=q=>norm(q).split(/[^a-z0-9]+/).filter(x=>x&&!PARADAS.has(x));
 const textoBusca=p=>p.txt||(p.txt=' '+norm(p.nombre+' '+tipoDe(p)+' '+cadena(p.ruta).concat(p.otra?cadena(p.otra):[]).map(n=>n.t+' '+n.n).join(' ')+' '+(MARCAS[p.marca]||'')+' '+(p.ref||'')).replace(/[^a-z0-9]+/g,' ')+' ');
 // por principio de palabra («baño» no encuentra «ébano»); con números, también por dentro («e27» en «1xe27»)
-const tiene=(t,x)=>t.includes(' '+x)||t.includes(' '+x.replace(/e?s$/,''))||/\d/.test(x)&&t.includes(x);
+const tiene1=(t,x)=>t.includes(' '+x)||t.includes(' '+x.replace(/e?s$/,''))||/\d/.test(x)&&t.includes(x);
+// números en letra o en cifra (23-nov-2026: «consola dos cajones» no encontraba la «Consola 2 cajones»)
+const NUM={dos:'2',tres:'3',cuatro:'4',cinco:'5',seis:'6',siete:'7',ocho:'8',nueve:'9',diez:'10'},NUMI=Object.fromEntries(Object.entries(NUM).map(([a,b])=>[b,a]));
+const tiene=(t,x)=>tiene1(t,x)||!!NUM[x]&&t.includes(' '+NUM[x]+' ')||!!NUMI[x]&&t.includes(' '+NUMI[x]+' ');
 function buscar(q){const w=palabrasBusca(q);if(!w.length)return [];
   const r=norm(q).replace(/[\s.-]+/g,''),porRef=r.length>=4&&/\d/.test(r)?P.filter(p=>p.ref&&norm(p.ref).replace(/[\s.-]+/g,'')===r):[];
   const L=P.filter(p=>{const t=textoBusca(p);return w.every(x=>tiene(t,x));});
